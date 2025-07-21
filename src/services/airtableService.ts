@@ -13,43 +13,40 @@ export interface ApplicationData extends CompanyData {
   submission_id?: string;
 }
 
-// Konfiguracja Airtable z zmiennych środowiskowych
-const AIRTABLE_CONFIG: AirtableConfig = {
-  pat: import.meta.env.VITE_AIRTABLE_PAT || '',
-  baseId: import.meta.env.VITE_AIRTABLE_BASE_ID || '',
-  applicationsTableId: import.meta.env.VITE_AIRTABLE_APPLICATIONS_TABLE_ID || '',
-  employeesTableId: import.meta.env.VITE_AIRTABLE_EMPLOYEES_TABLE_ID || '',
-  baseUrl: 'https://api.airtable.com/v0'
+// Konfiguracja dla backend proxy - API keys są ukryte
+const AIRTABLE_CONFIG = {
+  // Używamy backend proxy zamiast bezpośrednich wywołań Airtable
+  proxyUrl: '/api/airtable',
+  applicationsTableId: 'tbl2SOkYU0eBG2ZGj',
+  employeesTableId: 'tblh7tsaWWwXxBgSi'
 };
 
-// Walidacja konfiguracji
-if (!AIRTABLE_CONFIG.pat || !AIRTABLE_CONFIG.baseId || !AIRTABLE_CONFIG.applicationsTableId || !AIRTABLE_CONFIG.employeesTableId) {
-  console.error('⚠️ BŁĄD: Brak wymaganych zmiennych środowiskowych Airtable:', {
-    pat: !!AIRTABLE_CONFIG.pat,
-    baseId: !!AIRTABLE_CONFIG.baseId,
-    applicationsTableId: !!AIRTABLE_CONFIG.applicationsTableId,
-    employeesTableId: !!AIRTABLE_CONFIG.employeesTableId
+// Helper function for making proxy requests
+const makeProxyRequest = async (endpoint: string, options: any = {}) => {
+  const response = await fetch(AIRTABLE_CONFIG.proxyUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      method: options.method || 'GET',
+      endpoint: endpoint,
+      data: options.data || null
+    })
   });
-}
 
-// Pobieranie ostatniego ID z Airtable
+  if (!response.ok) {
+    throw new Error(`Proxy error: ${response.status}`);
+  }
+
+  return response.json();
+};
+
+// Pobieranie ostatniego ID z Airtable przez proxy
 export const getLastSubmissionId = async (): Promise<number> => {
   try {
-    const response = await fetch(
-      `${AIRTABLE_CONFIG.baseUrl}/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.applicationsTableId}?maxRecords=1&sort%5B0%5D%5Bfield%5D=submission_id&sort%5B0%5D%5Bdirection%5D=desc`,
-      {
-        headers: {
-          'Authorization': `Bearer ${AIRTABLE_CONFIG.pat}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
+    const endpoint = `${AIRTABLE_CONFIG.applicationsTableId}?maxRecords=1&sort%5B0%5D%5Bfield%5D=submission_id&sort%5B0%5D%5Bdirection%5D=desc`;
+    const data = await makeProxyRequest(endpoint);
     
     if (data.records && data.records.length > 0) {
       const lastId = data.records[0].fields.submission_id;
