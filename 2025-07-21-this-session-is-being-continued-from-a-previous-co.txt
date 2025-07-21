@@ -1,0 +1,27 @@
+╭─────────────────────────────────────────────────────────────────╮
+│ ✻ Welcome to Claude Code!                                       │
+│                                                                 │
+│   /help for help, /status for your current setup                │
+│                                                                 │
+│   cwd: /Users/charlie/PycharmProjects/formularz/formularz-vite  │
+╰─────────────────────────────────────────────────────────────────╯
+
+⏺ Compact summary (ctrl+r to expand)
+  ⎿  Read src/styles/components.css (945 lines)
+  ⎿  Read src/components/steps/SuccessStep.tsx (154 lines)
+  ⎿  Read src/components/ModernEmployeeCard.tsx (546 lines)
+  ⎿  Read src/components/steps/CompanyDataStep.tsx (460 lines)
+  ⎿  Read src/components/ui/Input.tsx (67 lines)
+  ⎿  Todo list read (4 items)
+  ⎿  Claude usage limit reached. Your limit will reset at 6pm (Europe/Warsaw).
+
+      • /upgrade to increase your usage limit.
+
+> /save
+  ⎿  Claude usage limit reached. Your limit will reset at 6pm (Europe/Warsaw).
+
+      • /upgrade to increase your usage limit.
+
+> /export 
+  ⎿  Conversation copied to clipboard
+
