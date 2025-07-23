@@ -239,7 +239,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
               Wniosek o sfinansowanie kształcenia ustawicznego
             </h1>
             <p>
-              Wypełnij formularz krok po kroku, aby złożyć wniosek
+              Wypełnij formularz krok po kroku, aby podać dane do wniosku
             </p>
           </div>
           
