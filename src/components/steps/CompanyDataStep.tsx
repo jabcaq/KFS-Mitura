@@ -104,7 +104,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange }) => 
                 <Input
                   value={data.representative_person}
                   onChange={handleChange('representative_person')}
-                  placeholder="Imię i nazwisko"
+                  placeholder="Imie i nazwisko"
                 />
               </FormField>
             </div>
