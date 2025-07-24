@@ -265,7 +265,7 @@ export const submitToAirtable = async (
 // Pobierz dane aplikacji po ID
 export const getApplicationById = async (recordId: string): Promise<ApplicationData> => {
   try {
-    const data = await makeProxyRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${recordId}`);
+    const data = await makeProxyRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${recordId}?returnFieldsByFieldId=true`);
     console.log('📊 Pobrane dane aplikacji:', JSON.stringify(data, null, 2));
     const fields = data.fields;
     
@@ -303,8 +303,8 @@ export const getEmployeesByApplicationId = async (applicationRecordId: string): 
     console.log('🔍 Pobieranie pracowników dla aplikacji:', applicationRecordId);
     
     // KROK 1: Pobierz dane aplikacji żeby dostać listę ID pracowników
-    const appData = await makeProxyRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${applicationRecordId}`);
-    const employeeIds = appData.fields[EMPLOYEE_FIELD_IDS.employees] || [];
+    const appData = await makeProxyRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${applicationRecordId}?returnFieldsByFieldId=true`);
+    const employeeIds = appData.fields[COMPANY_FIELD_IDS.employees_link] || [];
     
     console.log('👥 ID pracowników z aplikacji:', employeeIds);
 
@@ -321,7 +321,7 @@ export const getEmployeesByApplicationId = async (applicationRecordId: string): 
       console.log(`🔍 Pobieranie pracownika ${i + 1}/${employeeIds.length}:`, empId);
       
       try {
-        const empData = await makeProxyRequest(`${AIRTABLE_CONFIG.employeesTableId}/${empId}`);
+        const empData = await makeProxyRequest(`${AIRTABLE_CONFIG.employeesTableId}/${empId}?returnFieldsByFieldId=true`);
         const fields = empData.fields;
         
         console.log(`👤 Pracownik ${i + 1} dane:`, {
@@ -335,7 +335,7 @@ export const getEmployeesByApplicationId = async (applicationRecordId: string): 
           id: empData.id,
           name: fields[EMPLOYEE_FIELD_IDS.employee_name] || '',
           gender: fields[EMPLOYEE_FIELD_IDS.gender] || '',
-          birth_date: fields[EMPLOYEE_FIELD_IDS.date] || approximateBirthDate(fields[EMPLOYEE_FIELD_IDS.age]) || '',
+          birth_date: approximateBirthDate(fields[EMPLOYEE_FIELD_IDS.age]) || '',
           education: fields[EMPLOYEE_FIELD_IDS.education] || '',
           position: fields[EMPLOYEE_FIELD_IDS.position] || '',
           contract_type: fields[EMPLOYEE_FIELD_IDS.contract_type] || '',

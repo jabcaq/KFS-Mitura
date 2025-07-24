@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from './ui/Button';
+import { formatEducation, formatContractType } from '../utils/textUtils';
 import type { EmployeeCollection, CompanyData } from '../types';
 import * as airtableService from '../services/airtableServiceSecure';
 import type { ApplicationData } from '../services/airtableServiceSecure';
@@ -37,7 +38,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
 
     const loadData = async () => {
       if (!id) {
-        setError('Brak ID wniosku w URL');
+        setError('Brak ID formularza w URL');
         setIsLoading(false);
         return;
       }
@@ -110,7 +111,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
           {/* Loading steps */}
           <div className="loading-steps">
             <div className={`loading-step ${loadingStep === 'app' ? 'active' : ''}`}>
-              📋 Wniosek
+              📋 Formularz
             </div>
             <div className={`loading-step ${loadingStep === 'employees' ? 'active' : ''}`}>
               👥 Pracownicy
@@ -156,7 +157,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
             color: 'var(--error-700)', 
             marginBottom: 'var(--space-2)' 
           }}>
-            Wniosek nie został znaleziony
+            Formularz nie został znaleziony
           </h1>
           <p style={{ 
             fontSize: 'var(--text-lg)', 
@@ -433,14 +434,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
                       <div style={{ flex: '1 1 0', textAlign: 'center', margin: '0 5px' }}>
                         <div style={{fontSize: '12px', color: 'var(--neutral-500)', marginBottom: '2px'}}>Wykształcenie</div>
                         <div style={{fontSize: '14px', fontWeight: '600', color: 'var(--neutral-800)'}}>
-                          {employee.education === 'podstawowe' ? 'Podstawowe' :
-                           employee.education === 'gimnazjalne' ? 'Gimnazjalne' :
-                           employee.education === 'zawodowe' ? 'Zawodowe' :
-                           employee.education === 'srednie_ogolne' ? 'Średnie ogólnokształcące' :
-                           employee.education === 'srednie_zawodowe' ? 'Średnie zawodowe' :
-                           employee.education === 'policealne' ? 'Policealne' :
-                           employee.education === 'wyzsze' ? 'Wyższe' :
-                           employee.education || '—'}
+                          {formatEducation(employee.education) || '—'}
                         </div>
                       </div>
 
@@ -448,13 +442,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
                       <div style={{ flex: '1 1 0', textAlign: 'center', margin: '0 5px', marginRight: '0px' }}>
                         <div style={{fontSize: '12px', color: 'var(--neutral-500)', marginBottom: '2px'}}>Umowa</div>
                         <div style={{fontSize: '14px', fontWeight: '600', color: 'var(--neutral-800)'}}>
-                          {employee.contract_type === 'umowa_o_prace' ? 'O pracę' :
-                           employee.contract_type === 'umowa_zlecenie' ? 'Zlecenie' :
-                           employee.contract_type === 'umowa_dzielo' ? 'O dzieło' :
-                           employee.contract_type === 'b2b' ? 'B2B' :
-                           employee.contract_type === 'powolanie' ? 'Powołanie' :
-                           employee.contract_type === 'inne' ? 'Inne' :
-                           employee.contract_type || '—'}
+                          {formatContractType(employee.contract_type) || '—'}
                         </div>
                       </div>
 
@@ -510,7 +498,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
                   <svg viewBox="0 0 20 20" fill="currentColor" style={{width: '24px', height: '24px', marginRight: '8px'}}>
                     <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd"/>
                   </svg>
-                  <span>Drukuj wniosek</span>
+                  <span>Drukuj dane</span>
                 </div>
               </div>
 
@@ -519,7 +507,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
                   <svg viewBox="0 0 20 20" fill="currentColor" className="button-icon button-icon-right">
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                   </svg>
-                  <span className="button-text">Edytuj wniosek</span>
+                  <span className="button-text">Edytuj dane</span>
                 </div>
               </div>
             </div>

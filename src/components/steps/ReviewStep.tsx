@@ -1,6 +1,7 @@
 import React from 'react';
 import type { CompanyData, EmployeeCollection } from '../../types';
 import { TEXTS } from '../../constants/texts';
+import { formatEducation, formatContractType } from '../../utils/textUtils';
 
 interface ReviewStepProps {
   companyData: CompanyData;
@@ -169,27 +170,14 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ companyData, employees }) => {
                       <div style={{display: 'flex', alignItems: 'center', gap: '4px', height: '24px'}}>
                         <span style={{color: 'var(--neutral-600)'}}>🎓</span>
                         <span style={{color: 'var(--neutral-800)', fontWeight: '600'}}>
-                          {employee.education === 'podstawowe' ? TEXTS.EDUCATION.PRIMARY :
-                           employee.education === 'gimnazjalne' ? TEXTS.EDUCATION.MIDDLE :
-                           employee.education === 'zawodowe' ? TEXTS.EDUCATION.VOCATIONAL :
-                           employee.education === 'srednie_ogolne' ? TEXTS.EDUCATION.SECONDARY_GENERAL :
-                           employee.education === 'srednie_zawodowe' ? TEXTS.EDUCATION.SECONDARY_VOCATIONAL :
-                           employee.education === 'policealne' ? TEXTS.EDUCATION.POST_SECONDARY :
-                           employee.education === 'wyzsze' ? TEXTS.EDUCATION.HIGHER :
-                           employee.education}
+                          {formatEducation(employee.education)}
                         </span>
                       </div>
                       
                       <div style={{display: 'flex', alignItems: 'center', gap: '4px', height: '24px'}}>
                         <span style={{color: 'var(--neutral-600)'}}>📋</span>
                         <span style={{color: 'var(--neutral-800)', fontWeight: '600'}}>
-                          {employee.contract_type === 'umowa_o_prace' ? TEXTS.CONTRACT_TYPE.EMPLOYMENT :
-                           employee.contract_type === 'umowa_zlecenie' ? TEXTS.CONTRACT_TYPE.MANDATE :
-                           employee.contract_type === 'umowa_dzielo' ? TEXTS.CONTRACT_TYPE.SPECIFIC_WORK :
-                           employee.contract_type === 'b2b' ? TEXTS.CONTRACT_TYPE.B2B :
-                           employee.contract_type === 'powolanie' ? TEXTS.CONTRACT_TYPE.APPOINTMENT :
-                           employee.contract_type === 'inne' ? TEXTS.CONTRACT_TYPE.OTHER :
-                           employee.contract_type}
+                          {formatContractType(employee.contract_type)}
                         </span>
                       </div>
                       

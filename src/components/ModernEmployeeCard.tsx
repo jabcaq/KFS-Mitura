@@ -3,6 +3,7 @@ import { FormField } from './ui/FormField';
 import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { TEXTS } from '../constants/texts';
+import { formatEducation, formatContractType, normalizeEmployeeData } from '../utils/textUtils';
 import type { Employee } from '../types';
 
 interface ModernEmployeeCardProps {
@@ -24,7 +25,8 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
   const dropdownRefs = useRef<Record<string, HTMLDivElement>>({});
 
   useEffect(() => {
-    setFormData(employee);
+    const normalizedEmployee = normalizeEmployeeData(employee);
+    setFormData(normalizedEmployee);
   }, [employee]);
 
   const handleChange = (field: keyof Employee) => (
@@ -307,15 +309,7 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
               <div className={`custom-dropdown ${openDropdown === 'education' ? 'open' : ''}`} ref={el => { if (el) dropdownRefs.current['education'] = el; }}>
                 <div className="custom-dropdown-input" onClick={() => setOpenDropdown(openDropdown === 'education' ? null : 'education')}>
                   <Input
-                    value={
-                      formData.education === 'podstawowe' ? TEXTS.EDUCATION.PRIMARY :
-                      formData.education === 'gimnazjalne' ? TEXTS.EDUCATION.MIDDLE :
-                      formData.education === 'zawodowe' ? TEXTS.EDUCATION.VOCATIONAL :
-                      formData.education === 'srednie_ogolne' ? TEXTS.EDUCATION.SECONDARY_GENERAL :
-                      formData.education === 'srednie_zawodowe' ? TEXTS.EDUCATION.SECONDARY_VOCATIONAL :
-                      formData.education === 'policealne' ? TEXTS.EDUCATION.POST_SECONDARY :
-                      formData.education === 'wyzsze' ? TEXTS.EDUCATION.HIGHER : ''
-                    }
+                    value={formatEducation(formData.education)}
                     onChange={() => {}}
                     placeholder="Wybierz wykształcenie"
                     readOnly
@@ -325,13 +319,13 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                 {openDropdown === 'education' && (
                   <div className="custom-dropdown-options">
                     {[
-                      { value: 'podstawowe', label: TEXTS.EDUCATION.PRIMARY },
-                      { value: 'gimnazjalne', label: TEXTS.EDUCATION.MIDDLE },
-                      { value: 'zawodowe', label: TEXTS.EDUCATION.VOCATIONAL },
-                      { value: 'srednie_ogolne', label: TEXTS.EDUCATION.SECONDARY_GENERAL },
-                      { value: 'srednie_zawodowe', label: TEXTS.EDUCATION.SECONDARY_VOCATIONAL },
-                      { value: 'policealne', label: TEXTS.EDUCATION.POST_SECONDARY },
-                      { value: 'wyzsze', label: TEXTS.EDUCATION.HIGHER }
+                      { value: 'podstawowe', label: 'Podstawowe' },
+                      { value: 'gimnazjalne', label: 'Gimnazjalne' },
+                      { value: 'zawodowe', label: 'Zawodowe' },
+                      { value: 'srednie ogólnokształcące', label: 'Średnie ogólnokształcące' },
+                      { value: 'średnie zawodowe', label: 'Średnie zawodowe' },
+                      { value: 'policealne', label: 'Policealne' },
+                      { value: 'wyższe', label: 'Wyższe' }
                     ].map(option => (
                       <div
                         key={option.value}
@@ -368,15 +362,7 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
               <div className={`custom-dropdown ${openDropdown === 'contract_type' ? 'open' : ''}`} ref={el => { if (el) dropdownRefs.current['contract_type'] = el; }}>
                 <div className="custom-dropdown-input" onClick={() => setOpenDropdown(openDropdown === 'contract_type' ? null : 'contract_type')}>
                   <Input
-                    value={
-                      formData.contract_type === 'umowa_o_prace' ? TEXTS.CONTRACT_TYPE.EMPLOYMENT :
-                      formData.contract_type === 'umowa_zlecenie' ? TEXTS.CONTRACT_TYPE.MANDATE :
-                      formData.contract_type === 'umowa_dzielo' ? TEXTS.CONTRACT_TYPE.SPECIFIC_WORK :
-                      formData.contract_type === 'b2b' ? TEXTS.CONTRACT_TYPE.B2B :
-                      formData.contract_type === 'powolanie' ? TEXTS.CONTRACT_TYPE.APPOINTMENT :
-                      formData.contract_type === 'wlasciciel' ? TEXTS.CONTRACT_TYPE.OWNER :
-                      formData.contract_type === 'inne' ? TEXTS.CONTRACT_TYPE.OTHER : ''
-                    }
+                    value={formatContractType(formData.contract_type)}
                     onChange={() => {}}
                     placeholder="Wybierz typ umowy"
                     readOnly
@@ -386,13 +372,13 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                 {openDropdown === 'contract_type' && (
                   <div className="custom-dropdown-options">
                     {[
-                      { value: 'umowa_o_prace', label: TEXTS.CONTRACT_TYPE.EMPLOYMENT },
-                      { value: 'umowa_zlecenie', label: TEXTS.CONTRACT_TYPE.MANDATE },
-                      { value: 'umowa_dzielo', label: TEXTS.CONTRACT_TYPE.SPECIFIC_WORK },
-                      { value: 'b2b', label: TEXTS.CONTRACT_TYPE.B2B },
-                      { value: 'powolanie', label: TEXTS.CONTRACT_TYPE.APPOINTMENT },
-                      { value: 'wlasciciel', label: TEXTS.CONTRACT_TYPE.OWNER },
-                      { value: 'inne', label: TEXTS.CONTRACT_TYPE.OTHER }
+                      { value: 'umowa o prace', label: 'Umowa o pracę' },
+                      { value: 'umowa zlecenie', label: 'Umowa zlecenie' },
+                      { value: 'umowa dzielo', label: 'Umowa dzieło' },
+                      { value: 'b2b', label: 'B2B' },
+                      { value: 'powolanie', label: 'Powołanie' },
+                      { value: 'właściciel firmy', label: 'Właściciel firmy' },
+                      { value: 'inne', label: 'Inne' }
                     ].map(option => (
                       <div
                         key={option.value}
@@ -513,28 +499,14 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
         <div className="flex items-center gap-2" style={{height: '24px'}}>
           <span style={{color: 'var(--neutral-600)'}}>🎓</span>
           <span style={{color: 'var(--neutral-800)', fontWeight: '600'}}>
-            {formData.education === 'podstawowe' ? TEXTS.EDUCATION.PRIMARY :
-             formData.education === 'gimnazjalne' ? TEXTS.EDUCATION.MIDDLE :
-             formData.education === 'zawodowe' ? TEXTS.EDUCATION.VOCATIONAL :
-             formData.education === 'srednie_ogolne' ? TEXTS.EDUCATION.SECONDARY_GENERAL :
-             formData.education === 'srednie_zawodowe' ? TEXTS.EDUCATION.SECONDARY_VOCATIONAL :
-             formData.education === 'policealne' ? TEXTS.EDUCATION.POST_SECONDARY :
-             formData.education === 'wyzsze' ? TEXTS.EDUCATION.HIGHER :
-             formData.education}
+            {formatEducation(formData.education)}
           </span>
         </div>
         
         <div className="flex items-center gap-2" style={{height: '24px'}}>
           <span style={{color: 'var(--neutral-600)'}}>📋</span>
           <span style={{color: 'var(--neutral-800)', fontWeight: '600'}}>
-            {formData.contract_type === 'umowa_o_prace' ? TEXTS.CONTRACT_TYPE.EMPLOYMENT :
-             formData.contract_type === 'umowa_zlecenie' ? TEXTS.CONTRACT_TYPE.MANDATE :
-             formData.contract_type === 'umowa_dzielo' ? TEXTS.CONTRACT_TYPE.SPECIFIC_WORK :
-             formData.contract_type === 'b2b' ? TEXTS.CONTRACT_TYPE.B2B :
-             formData.contract_type === 'powolanie' ? TEXTS.CONTRACT_TYPE.APPOINTMENT :
-             formData.contract_type === 'wlasciciel' ? TEXTS.CONTRACT_TYPE.OWNER :
-             formData.contract_type === 'inne' ? TEXTS.CONTRACT_TYPE.OTHER :
-             formData.contract_type}
+            {formatContractType(formData.contract_type)}
           </span>
         </div>
         

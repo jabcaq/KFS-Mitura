@@ -18,7 +18,7 @@ export const SELECT_OPTIONS = {
     "srednie ogólnokształcące", 
     "średnie zawodowe", 
     "policealne", 
-    "wyzsze"
+    "wyższe"
   ],
   contract_type: [
     "umowa o prace", 

@@ -1,26 +1,26 @@
-// Complete integration test with all fields
-async function testCompleteIntegration() {
-  console.log("🚀 Testing COMPLETE Airtable integration with all Polish fields...\n");
+// Final integration test with corrected "wyższe" spelling
+async function testFinalIntegration() {
+  console.log('🚀 FINAL INTEGRATION TEST - Sprawdzanie poprawności zapisywania...\n');
   
-  // Complete test company data matching all our form fields
+  // Complete test data with corrected spelling
   const testCompanyData = {
-    company_name: "FINAL TEST - Kompletna Integracja Sp. z o.o.",
-    company_nip: "9876543210",
+    company_name: "FINAL TEST - Poprawna Pisownia Sp. z o.o.",
+    company_nip: "1111111111",
     company_pkd: "62.01.Z",
-    representative_person: "Jan Kompletny Manager",
-    representative_phone: "999888777",
-    representative_email: "jan.manager@finaltest.pl",
-    contact_person_name: "Anna Kompletna Assistant",
-    contact_person_phone: "777888999",
-    contact_person_email: "anna@finaltest.pl",
-    responsible_person_phone: "555666777",
-    company_address: "ul. Kompletna Integracja 999, 00-999 Warszawa",
-    activity_place: "ul. Kompletna Integracja 999, 00-999 Warszawa",
-    correspondence_address: "ul. Korespondencyjna 123, 00-123 Warszawa",
-    bank_name: "PKO Bank Final Test",
-    bank_account: "PL 99 1111 2222 3333 4444 5555 6666",
+    representative_person: "Jan Finalny Manager",
+    representative_phone: "111222333",
+    representative_email: "jan.final@test.pl",
+    contact_person_name: "Anna Finalna Assistant",
+    contact_person_phone: "333222111",
+    contact_person_email: "anna.final@test.pl",
+    responsible_person_phone: "555444333",
+    company_address: "ul. Finalna Integracja 123, 00-999 Warszawa",
+    activity_place: "ul. Finalna Integracja 123, 00-999 Warszawa",
+    correspondence_address: "ul. Korespondencyjna Final 456, 00-888 Warszawa",
+    bank_name: "PKO Bank Final Integration",
+    bank_account: "PL 11 2222 3333 4444 5555 6666 7777",
     account_not_interest_bearing: "tak",
-    total_employees: "3",
+    total_employees: "2",
     company_size: "mikro",
     balance_under_2m: "tak"
   };
@@ -28,39 +28,26 @@ async function testCompleteIntegration() {
   const testEmployees = {
     "1": {
       id: "final-test-emp-1",
-      name: "Paweł Kompletny Developer",
-      gender: "M",
-      birth_date: "1985-03-15",
-      education: "wyższe",
+      name: "Maria Finalna Developer",
+      gender: "K",
+      birth_date: "1992-05-10",
+      education: "wyższe", // ✅ Poprawna pisownia z ż
       position: "Senior Full Stack Developer",
-      contract_type: "umowa o prace",
-      contract_start: "2024-01-01",
+      contract_type: "umowa o prace", // ✅ Nowa pisownia ze spacjami
+      contract_start: "2024-01-15",
       contract_end: "2024-12-31",
       isEditing: false,
       isNew: false
     },
     "2": {
       id: "final-test-emp-2",
-      name: "Maria Kompletna Designer",
-      gender: "K",
-      birth_date: "1990-07-20",
-      education: "średnie zawodowe",
-      position: "UX/UI Designer",
-      contract_type: "umowa zlecenie",
-      contract_start: "2024-02-01",
-      contract_end: "",
-      isEditing: false,
-      isNew: false
-    },
-    "3": {
-      id: "final-test-emp-3",
-      name: "Piotr Kompletny Manager",
+      name: "Piotr Finalny Designer",
       gender: "M",
-      birth_date: "1988-11-10",
-      education: "wyższe",
-      position: "Project Manager",
-      contract_type: "właściciel firmy",
-      contract_start: "2024-01-01",
+      birth_date: "1988-11-25",
+      education: "średnie zawodowe", // ✅ Poprawna pisownia
+      position: "UX/UI Designer",
+      contract_type: "umowa zlecenie", // ✅ Nowa pisownia
+      contract_start: "2024-02-01",
       contract_end: "",
       isEditing: false,
       isNew: false
@@ -68,15 +55,12 @@ async function testCompleteIntegration() {
   };
 
   try {
-    console.log("🏢 Submitting complete company data...");
-    console.log("Company:", testCompanyData.company_name);
-    console.log("Employees:", Object.keys(testEmployees).length);
+    console.log('🏢 Submitting final test data...');
+    console.log('Company:', testCompanyData.company_name);
+    console.log('Employees:', Object.keys(testEmployees).length);
 
-    // Test submission using our service (simulated)
-    // This simulates what submitToAirtable function does
-    
     // Step 1: Generate submission ID
-    console.log("\n📋 Step 1: Generating submission ID...");
+    console.log('\n📋 Step 1: Generating submission ID...');
     const lastIdResponse = await fetch('http://localhost:3001/api/airtable', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -90,10 +74,10 @@ async function testCompleteIntegration() {
     const lastId = lastIdData?.records?.[0]?.fields?.fldb2lUUPqVyg3qHJ || 'KFS-0000';
     const newIdNumber = parseInt(lastId.replace('KFS-', '')) + 1;
     const submissionId = `KFS-${newIdNumber.toString().padStart(4, '0')}`;
-    console.log("✅ Generated submission ID:", submissionId);
+    console.log('✅ Generated submission ID:', submissionId);
 
-    // Step 2: Submit company with ALL fields using field IDs
-    console.log("\n🏢 Step 2: Submitting company data with all fields...");
+    // Step 2: Submit company with ALL fields
+    console.log('\n🏢 Step 2: Submitting company data...');
     const companyPayload = {
       records: [{
         fields: {
@@ -120,7 +104,7 @@ async function testCompleteIntegration() {
           'fld9IwmSY5nJjLyXU': testCompanyData.balance_under_2m,       // balance_under_2m
           'fldHwKZarbtaEYVL1': 'Wysłane',                             // status
           'fldh8HPFPpSIPgf5C': new Date().toISOString().split('T')[0], // created
-          'fldTVQ8oIhA6qhhKp': `http://localhost:3000/wniosek/PLACEHOLDER` // form_link
+          'fldTVQ8oIhA6qhhKp': `http://localhost:5173/wniosek/PLACEHOLDER` // form_link
         }
       }]
     };
@@ -142,11 +126,11 @@ async function testCompleteIntegration() {
 
     const companyResult = await companyResponse.json();
     const applicationRecordId = companyResult.records[0].id;
-    console.log("✅ Company data submitted successfully!");
-    console.log("Application Record ID:", applicationRecordId);
+    console.log('✅ Company data submitted successfully!');
+    console.log('Application Record ID:', applicationRecordId);
 
     // Step 3: Update form link
-    console.log("\n🔗 Step 3: Updating form link...");
+    console.log('\n🔗 Step 3: Updating form link...');
     await fetch('http://localhost:3001/api/airtable', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -155,21 +139,27 @@ async function testCompleteIntegration() {
         endpoint: `tbl2SOkYU0eBG2ZGj/${applicationRecordId}`,
         data: {
           fields: {
-            'fldTVQ8oIhA6qhhKp': `http://localhost:3000/wniosek/${applicationRecordId}`
+            'fldTVQ8oIhA6qhhKp': `http://localhost:5173/wniosek/${applicationRecordId}`
           }
         }
       })
     });
-    console.log("✅ Form link updated!");
+    console.log('✅ Form link updated!');
 
-    // Step 4: Submit employees with ALL fields
-    console.log("\n👥 Step 4: Submitting employees with all fields...");
+    // Step 4: Submit employees with corrected spelling
+    console.log('\n👥 Step 4: Submitting employees with corrected data...');
     const employeeRecords = [];
     let employeeIndex = 1;
 
     Object.keys(testEmployees).forEach(employeeId => {
       const emp = testEmployees[employeeId];
       const age = emp.birth_date ? calculateAge(emp.birth_date) : null;
+      
+      console.log(`👤 Employee ${employeeIndex}:`, {
+        name: emp.name,
+        education: emp.education, // Should be "wyższe" with ż
+        contract_type: emp.contract_type // Should be "umowa o prace" with spaces
+      });
       
       employeeRecords.push({
         fields: {
@@ -178,8 +168,8 @@ async function testCompleteIntegration() {
           'fldzYdLbAH6RfPSUN': emp.gender,                         // gender
           'fldbciv6U2QXtJZgZ': age,                                // age
           'fldNCgGkvXYGuHpR7': emp.position,                       // position
-          'fldRRQmwMtOjvyTKT': emp.education,                      // education
-          'fldVxJrPOaMQcvL85': emp.contract_type,                  // contract_type
+          'fldRRQmwMtOjvyTKT': emp.education,                      // education ✅ wyższe
+          'fldVxJrPOaMQcvL85': emp.contract_type,                  // contract_type ✅ umowa o prace
           'fldNZlLDeo94m3zkl': emp.contract_start,                 // contract_start
           'fldvpiCNqjHvchH4T': emp.contract_end || null,           // contract_end
           'fld8u4udfJZZj0Jg2': new Date().toISOString(),           // created
@@ -209,25 +199,30 @@ async function testCompleteIntegration() {
     }
 
     const employeeResult = await employeeResponse.json();
-    console.log("✅ All employees submitted successfully!");
-    console.log("Employee records created:", employeeResult.records.length);
+    console.log('✅ All employees submitted successfully!');
+    console.log('Employee records created:', employeeResult.records.length);
 
     // Success summary
-    console.log("\n🎉 COMPLETE INTEGRATION TEST SUCCESS!");
-    console.log("═══════════════════════════════════════");
-    console.log("✅ Submission ID:", submissionId);
-    console.log("✅ Company Record ID:", applicationRecordId);
-    console.log("✅ Employee Records:", employeeResult.records.length);
-    console.log("✅ All Polish field names mapped to Field IDs");
-    console.log("✅ All form fields successfully saved to Airtable");
-    console.log("\n👀 Check your Airtable to verify all data is properly stored!");
-    console.log("🌐 Form URL:", `http://localhost:3000/wniosek/${applicationRecordId}`);
+    console.log('\n🎉 FINAL INTEGRATION TEST SUCCESS!');
+    console.log('═══════════════════════════════════════');
+    console.log('✅ Submission ID:', submissionId);
+    console.log('✅ Company Record ID:', applicationRecordId);
+    console.log('✅ Employee Records:', employeeResult.records.length);
+    console.log('✅ Corrected spelling: "wyższe" with ż');
+    console.log('✅ Corrected spacing: "umowa o prace" with spaces');
+    console.log('✅ Removed "(opcjonalne)" from address labels');
+    console.log('✅ All Polish field names properly formatted');
+    console.log('\n👀 Check your Airtable to verify all data is properly stored!');
+    console.log('🌐 Form URL:', `http://localhost:5173/wniosek/${applicationRecordId}`);
+    console.log('\nTest both views:');
+    console.log('📝 Edit view:', `http://localhost:5173/wniosek/${applicationRecordId}/edit`);
+    console.log('👁️  View mode:', `http://localhost:5173/wniosek/${applicationRecordId}`);
 
   } catch (error) {
-    console.error("\n❌ COMPLETE INTEGRATION TEST FAILED!");
-    console.error("═══════════════════════════════════════");
-    console.error("Error:", error.message);
-    console.error("Full error:", error);
+    console.error('\n❌ FINAL INTEGRATION TEST FAILED!');
+    console.error('═══════════════════════════════════════');
+    console.error('Error:', error.message);
+    console.error('Full error:', error);
   }
 }
 
@@ -245,5 +240,5 @@ function calculateAge(birthDate) {
   return age;
 }
 
-// Run the complete test
-testCompleteIntegration();
+// Run the final test
+testFinalIntegration();

@@ -68,7 +68,7 @@ export const TEXTS = {
     SAVE_EMPLOYEE: "Zapisz pracownika",
     ADD_EMPLOYEE: "Dodaj pracownika", 
     CANCEL: "Anuluj",
-    SUBMIT: "Wyślij wniosek",
+    SUBMIT: "Wyślij dane",
     NEXT: "Dalej",
     PREVIOUS: "Wstecz"
   },

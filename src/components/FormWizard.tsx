@@ -6,6 +6,7 @@ import EmployeesStep from './steps/EmployeesStep';
 import ReviewStep from './steps/ReviewStep';
 import SuccessStep from './steps/SuccessStep';
 import { submitToAirtable } from '../services/airtableServiceSecure';
+import { normalizeEmployeeData } from '../utils/textUtils';
 import type { CompanyData, EmployeeCollection } from '../types';
 
 interface FormWizardProps {
@@ -96,8 +97,20 @@ const loadSavedData = (): WizardData => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsedData = JSON.parse(saved);
+      
+      // Normalize employee data to handle legacy values
+      const normalizedEmployees: EmployeeCollection = {};
+      Object.keys(parsedData.employees || {}).forEach(key => {
+        normalizedEmployees[key] = normalizeEmployeeData(parsedData.employees[key]);
+      });
+      
+      const normalizedData = {
+        ...parsedData,
+        employees: normalizedEmployees
+      };
+      
       console.log('📁 Przywrócono dane z localStorage:', Object.keys(parsedData.companyData).filter(key => parsedData.companyData[key]).length, 'pól wypełnionych');
-      return parsedData;
+      return normalizedData;
     }
   } catch (error) {
     console.warn('❌ Błąd podczas odczytywania danych z localStorage:', error);

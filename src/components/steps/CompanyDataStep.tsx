@@ -585,7 +585,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
               className="shadow-sm hover:bg-neutral-200 transition-colors"
             >
               <span>
-                <span style={{marginRight: '8px'}}>🏭</span>Adres działalności inny niż adres siedziby (opcjonalnie)
+                <span style={{marginRight: '8px'}}>🏭</span>Adres działalności inny niż adres siedziby
               </span>
               <span style={{ transform: showActivityAddress ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                 ▼
@@ -652,7 +652,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
               className="shadow-sm hover:bg-neutral-200 transition-colors"
             >
               <span>
-                <span style={{marginRight: '8px'}}>📮</span>Adres korespondencji inny niż adres siedziby (opcjonalnie)
+                <span style={{marginRight: '8px'}}>📮</span>Adres korespondencji inny niż adres siedziby
               </span>
               <span style={{ transform: showCorrespondenceAddress ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                 ▼
