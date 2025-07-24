@@ -60,11 +60,19 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
         // Krok 3: Finalizacja
         setLoadingStep('complete');
         
-        // Ustaw submission_id z danych aplikacji
-        setSubmissionId(appData.submission_id || 'Brak numeru');
+        // Ustaw submission_id z danych aplikacji - jeśli puste, stwórz z record ID
+        let displayId = appData.submission_id;
+        if (!displayId && id) {
+          // Konwertuj record ID na format KFS-XXXX
+          const idNumber = id.slice(-4); // Ostatnie 4 znaki record ID
+          displayId = `KFS-${idNumber.toUpperCase()}`;
+        }
+        setSubmissionId(displayId || 'Brak numeru');
 
         console.log('Załadowano dane wniosku:', { appData, empData });
         console.log('🔍 DEBUG: submission_id z Airtable:', appData.submission_id);
+        console.log('🔍 DEBUG: record ID from URL:', id);
+        console.log('🔍 DEBUG: final displayId:', displayId);
       } catch (err: any) {
         console.error('Błąd ładowania wniosku:', err);
         setError(err.message || 'Nie udało się załadować wniosku');
