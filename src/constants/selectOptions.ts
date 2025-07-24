@@ -44,8 +44,8 @@ export type ContractType = typeof SELECT_OPTIONS.contract_type[number];
 export const isValidSelectOption = <T extends keyof typeof SELECT_OPTIONS>(
   field: T, 
   value: string
-): value is typeof SELECT_OPTIONS[T][number] => {
-  return SELECT_OPTIONS[field].includes(value as any);
+): boolean => {
+  return (SELECT_OPTIONS[field] as readonly string[]).includes(value);
 };
 
 // Export individual field options for easier imports

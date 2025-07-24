@@ -16,6 +16,17 @@ export interface CompanyData {
   activity_place: string;
   correspondence_address: string;
   
+  // Nowe pola adresowe (rozłożone na części)
+  company_street: string;
+  company_postal_code: string;
+  company_city: string;
+  activity_street: string;
+  activity_postal_code: string;
+  activity_city: string;
+  correspondence_street: string;
+  correspondence_postal_code: string;
+  correspondence_city: string;
+  
   bank_name: string;
   bank_account: string;
   account_not_interest_bearing: 'tak' | 'nie' | '';
@@ -95,7 +106,7 @@ export interface ApplicationRecord {
 
 // Employee record for Airtable
 export interface EmployeeRecord {
-  Id: string;
+  id: string;
   employee_name: string;
   gender: string;
   birth_date: string;
@@ -104,7 +115,9 @@ export interface EmployeeRecord {
   contract_type: string;
   contract_start: string;
   contract_end: string;
-  application_id: string[];
+  created: string;
+  company_link: string;
+  application_id: string;
 }
 
 // Component props

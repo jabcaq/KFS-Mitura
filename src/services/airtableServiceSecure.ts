@@ -90,6 +90,7 @@ const EMPLOYEE_FIELD_IDS = {
   employee_name: 'fld2z5G2cb5cxeuOP',             // 'Imię i nazwisko'
   gender: 'fldzYdLbAH6RfPSUN',                    // 'Płeć'
   age: 'fldbciv6U2QXtJZgZ',                       // 'Wiek'
+  birth_date: 'fldMLKZq9EJY9Rvk8',                // 'Data urodzenia'
   position: 'fldNCgGkvXYGuHpR7',                  // 'Stanowisko'
   education: 'fldRRQmwMtOjvyTKT',                 // 'Wykształcenie'
   
@@ -223,6 +224,7 @@ export const submitToAirtable = async (
           [EMPLOYEE_FIELD_IDS.employee_name]: emp.name || '',
           [EMPLOYEE_FIELD_IDS.gender]: emp.gender || '',
           [EMPLOYEE_FIELD_IDS.age]: emp.birth_date ? calculateAgeFromDate(emp.birth_date) : null,
+          [EMPLOYEE_FIELD_IDS.birth_date]: emp.birth_date || '',
           [EMPLOYEE_FIELD_IDS.education]: emp.education || '',
           [EMPLOYEE_FIELD_IDS.position]: emp.position || '',
           [EMPLOYEE_FIELD_IDS.contract_type]: emp.contract_type || '',
@@ -284,6 +286,16 @@ export const getApplicationById = async (recordId: string): Promise<ApplicationD
       company_address: fields[COMPANY_FIELD_IDS.company_address] || '',
       activity_place: fields[COMPANY_FIELD_IDS.activity_place] || '',
       correspondence_address: fields[COMPANY_FIELD_IDS.correspondence_address] || '',
+      // Nowe pola adresowe - mapped to empty strings as they don't exist in Airtable yet
+      company_street: '',
+      company_postal_code: '',
+      company_city: '',
+      activity_street: '',
+      activity_postal_code: '',
+      activity_city: '',
+      correspondence_street: '',
+      correspondence_postal_code: '',
+      correspondence_city: '',
       bank_name: fields[COMPANY_FIELD_IDS.bank_name] || '',
       bank_account: fields[COMPANY_FIELD_IDS.bank_account] || '',
       account_not_interest_bearing: fields[COMPANY_FIELD_IDS.account_not_interest_bearing] ? 'tak' : 'nie',
@@ -335,7 +347,7 @@ export const getEmployeesByApplicationId = async (applicationRecordId: string): 
           id: empData.id,
           name: fields[EMPLOYEE_FIELD_IDS.employee_name] || '',
           gender: fields[EMPLOYEE_FIELD_IDS.gender] || '',
-          birth_date: approximateBirthDate(fields[EMPLOYEE_FIELD_IDS.age]) || '',
+          birth_date: fields[EMPLOYEE_FIELD_IDS.birth_date] || approximateBirthDate(fields[EMPLOYEE_FIELD_IDS.age]) || '',
           education: fields[EMPLOYEE_FIELD_IDS.education] || '',
           position: fields[EMPLOYEE_FIELD_IDS.position] || '',
           contract_type: fields[EMPLOYEE_FIELD_IDS.contract_type] || '',
@@ -392,7 +404,7 @@ export const updateEmployee = async (employeeRecordId: string, data: Partial<Emp
     if (data.gender !== undefined) updateFields[EMPLOYEE_FIELD_IDS.gender] = data.gender;
     if (data.birth_date !== undefined) {
       updateFields[EMPLOYEE_FIELD_IDS.age] = data.birth_date ? calculateAgeFromDate(data.birth_date) : null;
-      updateFields[EMPLOYEE_FIELD_IDS.date] = data.birth_date || '';
+      updateFields[EMPLOYEE_FIELD_IDS.birth_date] = data.birth_date || '';
     }
     // Add more field mappings as needed
 
@@ -421,13 +433,13 @@ export const addEmployeeToApplication = async (applicationRecordId: string, subm
         [EMPLOYEE_FIELD_IDS.employee_name]: employee.name || '',
         [EMPLOYEE_FIELD_IDS.gender]: employee.gender || '',
         [EMPLOYEE_FIELD_IDS.age]: employee.birth_date ? calculateAgeFromDate(employee.birth_date) : null,
-        [EMPLOYEE_FIELD_IDS.date]: employee.birth_date || '',
+        [EMPLOYEE_FIELD_IDS.birth_date]: employee.birth_date || '',
         [EMPLOYEE_FIELD_IDS.education]: employee.education || '',
         [EMPLOYEE_FIELD_IDS.position]: employee.position || '',
         [EMPLOYEE_FIELD_IDS.contract_type]: employee.contract_type || '',
         [EMPLOYEE_FIELD_IDS.contract_start]: employee.contract_start || '',
         [EMPLOYEE_FIELD_IDS.contract_end]: employee.contract_end || '',
-        [EMPLOYEE_FIELD_IDS.application_id]: [applicationRecordId]
+        [EMPLOYEE_FIELD_IDS.company_link]: [applicationRecordId]
       }
     };
 
