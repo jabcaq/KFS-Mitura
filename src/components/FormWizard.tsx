@@ -42,7 +42,7 @@ const STEPS = [
   },
   {
     id: 'review',
-    title: 'Przegląd',
+    title: 'Podsumowanie danych',
     description: 'Sprawdź wprowadzone dane',
     icon: (
       <svg viewBox="0 0 20 20" fill="currentColor">

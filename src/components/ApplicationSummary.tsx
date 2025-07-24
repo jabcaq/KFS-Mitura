@@ -64,6 +64,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
         setSubmissionId(appData.submission_id || 'Brak numeru');
 
         console.log('Załadowano dane wniosku:', { appData, empData });
+        console.log('🔍 DEBUG: submission_id z Airtable:', appData.submission_id);
       } catch (err: any) {
         console.error('Błąd ładowania wniosku:', err);
         setError(err.message || 'Nie udało się załadować wniosku');
@@ -226,7 +227,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
                   </div>
                   <div className="progress-step-text">
                     <div className="progress-step-title">Numer wniosku</div>
-                    <div className="progress-step-description" style={{ fontFamily: 'monospace', fontSize: '16px', fontWeight: 'bold' }}>{submissionId}</div>
+                    <div className="progress-step-description" style={{ fontFamily: 'monospace', fontSize: '16px', fontWeight: 'bold' }}>{submissionId || 'Ładowanie...'}</div>
                   </div>
                 </div>
                 <div className="progress-step-connector completed" aria-hidden="true" />
