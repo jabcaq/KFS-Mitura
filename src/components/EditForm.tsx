@@ -6,7 +6,7 @@ import { ProgressSteps } from './ui/ProgressSteps';
 import CompanyDataStep from './steps/CompanyDataStep';
 import EmployeesStep from './steps/EmployeesStep';
 import type { CompanyData, EmployeeCollection } from '../types';
-import * as airtableService from '../services/airtableService';
+import * as airtableService from '../services/airtableServiceSecure';
 
 const EditForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();

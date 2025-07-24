@@ -218,13 +218,17 @@
 
 /* === FORM FIELD === */
 .form-field {
-  /* Add extra space to accommodate error messages without shifting layout */
-  margin-bottom: calc(var(--space-8) + var(--space-2));
+  /* Reserve space for error messages to prevent layout shift */
+  margin-bottom: var(--space-6);
   position: relative;
+  /* Minimum height to accommodate error message space */
+  min-height: calc(4rem + 1.5rem); /* input height + error space */
 }
 
 .form-field-wrapper {
   position: relative;
+  /* Ensure wrapper takes up the input space only */
+  height: auto;
 }
 
 .form-label {
@@ -265,13 +269,16 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
-  margin-top: var(--space-3);
+  margin-top: var(--space-2);
   font-size: var(--text-sm);
   color: var(--error-600);
   font-weight: var(--font-medium);
-  position: relative;
-  /* Prevent layout shift by ensuring error space is reserved */
-  min-height: 1.25rem;
+  /* Position below the input field without layout shift */
+  position: absolute;
+  top: calc(100% + 0.25rem); /* Position just below the input with small gap */
+  left: 0;
+  right: 0;
+  height: 1.25rem;
   line-height: var(--leading-normal);
 }
 
@@ -496,7 +503,7 @@ select.modern-input {
 }
 
 .dropdown-option.selected .option-label {
-  color: var(--primary-800);
+  color: var(--neutral-900); /* Czarny kolor zamiast primary-800 */
   font-weight: 600;
 }
 
@@ -573,7 +580,7 @@ select.modern-input {
 }
 
 .radio-option:has(input[type="radio"]:checked) .radio-label {
-  color: var(--primary-800);
+  color: var(--neutral-900); /* Czarny kolor zamiast primary-800 */
   font-weight: 600;
 }
 

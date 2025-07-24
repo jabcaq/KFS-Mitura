@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from './ui/Button';
 import type { EmployeeCollection, CompanyData } from '../types';
-import * as airtableService from '../services/airtableService';
-import type { ApplicationData } from '../services/airtableService';
+import * as airtableService from '../services/airtableServiceSecure';
+import type { ApplicationData } from '../services/airtableServiceSecure';
 
 interface ApplicationSummaryProps {
   companyData?: CompanyData;

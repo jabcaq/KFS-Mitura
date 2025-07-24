@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProgressSteps } from './ui/ProgressSteps';
 import CompanyDataStep from './steps/CompanyDataStep';
 import EmployeesStep from './steps/EmployeesStep';
 import ReviewStep from './steps/ReviewStep';
 import SuccessStep from './steps/SuccessStep';
-import { submitToAirtable } from '../services/airtableService';
+import { submitToAirtable } from '../services/airtableServiceSecure';
 import type { CompanyData, EmployeeCollection } from '../types';
 
 interface FormWizardProps {
@@ -51,6 +51,58 @@ const STEPS = [
   }
 ];
 
+const STORAGE_KEY = 'formularz_wizard_data';
+
+const getDefaultWizardData = (): WizardData => ({
+  companyData: {
+    company_name: '',
+    company_nip: '',
+    company_pkd: '',
+    representative_person: '',
+    representative_phone: '',
+    contact_person_name: '',
+    contact_person_phone: '',
+    contact_person_email: '',
+    
+    // Nowe pola adresowe
+    company_street: '',
+    company_postal_code: '',
+    company_city: '',
+    activity_street: '',
+    activity_postal_code: '',
+    activity_city: '',
+    correspondence_street: '',
+    correspondence_postal_code: '',
+    correspondence_city: '',
+    
+    // Stare pola (kompatybilność)
+    company_address: '',
+    activity_place: '',
+    correspondence_address: '',
+    
+    bank_name: '',
+    bank_account: '',
+    total_employees: '',
+    company_size: '',
+    balance_under_2m: ''
+  },
+  employees: {}
+});
+
+const loadSavedData = (): WizardData => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsedData = JSON.parse(saved);
+      console.log('📁 Przywrócono dane z localStorage:', Object.keys(parsedData.companyData).filter(key => parsedData.companyData[key]).length, 'pól wypełnionych');
+      return parsedData;
+    }
+  } catch (error) {
+    console.warn('❌ Błąd podczas odczytywania danych z localStorage:', error);
+  }
+  return getDefaultWizardData();
+};
+
 const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1); // DEBUG: Start at company step
@@ -58,41 +110,27 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
-  const [wizardData, setWizardData] = useState<WizardData>({
-    companyData: {
-      company_name: '',
-      company_nip: '',
-      company_pkd: '',
-      representative_person: '',
-      representative_phone: '',
-      contact_person_name: '',
-      contact_person_phone: '',
-      contact_person_email: '',
-      
-      // Nowe pola adresowe
-      company_street: '',
-      company_postal_code: '',
-      company_city: '',
-      activity_street: '',
-      activity_postal_code: '',
-      activity_city: '',
-      correspondence_street: '',
-      correspondence_postal_code: '',
-      correspondence_city: '',
-      
-      // Stare pola (kompatybilność)
-      company_address: '',
-      activity_place: '',
-      correspondence_address: '',
-      
-      bank_name: '',
-      bank_account: '',
-      total_employees: '',
-      company_size: '',
-      balance_under_2m: ''
-    },
-    employees: {}
-  });
+  const [wizardData, setWizardData] = useState<WizardData>(loadSavedData);
+
+  // Auto-save do localStorage przy każdej zmianie danych
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(wizardData));
+      console.log('💾 Dane zapisane do localStorage');
+    } catch (error) {
+      console.warn('❌ Błąd podczas zapisywania do localStorage:', error);
+    }
+  }, [wizardData]);
+
+  // Funkcja do czyszczenia localStorage
+  const clearSavedData = useCallback(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      console.log('🗑️ Dane usunięte z localStorage');
+    } catch (error) {
+      console.warn('❌ Błąd podczas usuwania z localStorage:', error);
+    }
+  }, []);
 
   const updateCompanyData = useCallback((data: Partial<CompanyData>) => {
     setWizardData(prev => ({
@@ -108,19 +146,15 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
     }));
   }, []);
 
-  const validateStep = (_step: number): boolean => {
-    // 🚧 TRYB TESTOWY - pomiń walidację dla szybkiego testowania
-    return true;
-    
-    /* ORYGINALNA WALIDACJA - odkomentuj dla produkcji
-    switch (step) {
+  const validateStep = (): boolean => {
+    switch (currentStep) {
       case 1:
-        // Validate company data
+        // Validate company data - required fields only (activity and correspondence addresses are optional)
         const required = [
           'company_name', 'company_nip', 'company_pkd', 
           'representative_person', 'representative_phone',
           'contact_person_name', 'contact_person_phone', 'contact_person_email',
-          'company_address', 'activity_place', 'correspondence_address',
+          'company_street', 'company_postal_code', 'company_city',
           'bank_name', 'bank_account', 'total_employees', 'company_size', 'balance_under_2m'
         ];
         return required.every(field => 
@@ -131,24 +165,37 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
         // Validate employees
         const employeeList = Object.values(wizardData.employees);
         return employeeList.length > 0 && employeeList.every(emp => 
-          emp.name && emp.gender && emp.age && emp.education && 
+          emp.name && emp.gender && emp.birth_date && emp.education && 
           emp.position && emp.contract_type && emp.contract_start
         );
       
       default:
         return true;
     }
-    */
   };
 
   const handleNext = () => {
-    if (validateStep(currentStep)) {
+    console.log('🔍 handleNext called, currentStep:', currentStep);
+    console.log('📊 Current wizard data:', wizardData);
+    
+    const isValid = validateStep();
+    console.log('✅ Validation result:', isValid);
+    
+    if (isValid) {
+      console.log('✅ Validation passed, moving to next step');
       if (!completedSteps.includes(currentStep)) {
         setCompletedSteps(prev => [...prev, currentStep]);
       }
       setCurrentStep(prev => Math.min(prev + 1, STEPS.length));
+    } else {
+      console.log('❌ Validation failed, staying on current step');
+      // Trigger visual validation in current step component
+      if (currentStep === 1 && (window as any).validateCompanyStep) {
+        (window as any).validateCompanyStep();
+      }
     }
   };
+
 
   const handlePrevious = () => {
     const newStep = Math.max(currentStep - 1, 1);
@@ -163,6 +210,9 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
     try {
       // Wyślij dane do Airtable
       const result = await submitToAirtable(wizardData.companyData, wizardData.employees);
+      
+      // Po udanym wysłaniu, usuń dane z localStorage
+      clearSavedData();
       
       // NATYCHMIASTOWE PRZEKIEROWANIE DO WNIOSKU
       console.log('Formularz wysłany pomyślnie, przekierowuję do wniosku:', result.applicationRecordId);
@@ -182,44 +232,12 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
   };
 
   const handleNewSubmission = () => {
+    // Wyczyść dane z localStorage i zresetuj formularz
+    clearSavedData();
     setShowSuccess(false);
     setCurrentStep(1);
     setCompletedSteps([]);
-    setWizardData({
-      companyData: {
-        company_name: '',
-        company_nip: '',
-        company_pkd: '',
-        representative_person: '',
-        representative_phone: '',
-        contact_person_name: '',
-        contact_person_phone: '',
-        contact_person_email: '',
-        
-        // Nowe pola adresowe
-        company_street: '',
-        company_postal_code: '',
-        company_city: '',
-        activity_street: '',
-        activity_postal_code: '',
-        activity_city: '',
-        correspondence_street: '',
-        correspondence_postal_code: '',
-        correspondence_city: '',
-        
-        // Stare pola (kompatybilność)
-        company_address: '',
-        activity_place: '',
-        correspondence_address: '',
-        
-        bank_name: '',
-        bank_account: '',
-        total_employees: '',
-        company_size: '',
-        balance_under_2m: ''
-      },
-      employees: {}
-    });
+    setWizardData(getDefaultWizardData());
   };
 
   if (showSuccess) {
@@ -228,7 +246,6 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
 
   const isLastStep = currentStep === STEPS.length;
   const isFirstStep = currentStep === 1;
-  const canProceed = validateStep(currentStep);
 
   return (
     <div className="form-wizard">
@@ -239,7 +256,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
               Wniosek o sfinansowanie kształcenia ustawicznego
             </h1>
             <p>
-              Wypełnij formularz krok po kroku, aby złożyć wniosek
+              Wypełnij formularz krok po kroku, aby podać dane do wniosku
             </p>
           </div>
           
@@ -259,6 +276,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
               <CompanyDataStep
                 data={wizardData.companyData}
                 onChange={updateCompanyData}
+                onValidate={() => true}
               />
             )}
             
@@ -298,7 +316,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
 
               <div>
                 {isLastStep ? (
-                  <div className={`wizard-nav-button ${!canProceed ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={!canProceed ? undefined : handleSubmit}>
+                  <div className="wizard-nav-button" onClick={handleSubmit}>
                     {isSubmitting ? (
                       <svg className="animate-spin button-icon button-icon-right" style={{width: '20px', height: '20px'}} viewBox="0 0 24 24" fill="none">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25"/>
@@ -312,7 +330,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
                     <span className="button-text">Wyślij wniosek</span>
                   </div>
                 ) : (
-                  <div className={`wizard-nav-button ${!canProceed ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={!canProceed ? undefined : handleNext}>
+                  <div className="wizard-nav-button" onClick={handleNext}>
                     <svg viewBox="0 0 24 24" fill="currentColor" className="button-icon button-icon-right">
                       <path fillRule="evenodd" d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12l-4.58 4.59z" clipRule="evenodd"/>
                     </svg>

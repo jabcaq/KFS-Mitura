@@ -1,25 +1,10 @@
 {
-  "name": "formularz-vite",
-  "version": 2,
-  "builds": [
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+      "source": "/((?!api).*)",
+      "destination": "/index.html"
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
-  "env": {
-    "VITE_AIRTABLE_PAT": "@vite_airtable_pat",
-    "VITE_AIRTABLE_BASE_ID": "@vite_airtable_base_id",
-    "VITE_AIRTABLE_APPLICATIONS_TABLE_ID": "@vite_airtable_applications_table_id",
-    "VITE_AIRTABLE_EMPLOYEES_TABLE_ID": "@vite_airtable_employees_table_id"
-  }
+  ]
 }

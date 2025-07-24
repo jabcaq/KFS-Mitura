@@ -36,12 +36,24 @@ export default async function handler(req, res) {
     const result = await response.json();
     
     if (!response.ok) {
-      throw new Error(`Airtable error: ${response.status}`);
+      console.error('Airtable API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        result: result,
+        url: airtableUrl,
+        method: method || 'GET'
+      });
+      throw new Error(`Airtable error: ${response.status} - ${JSON.stringify(result)}`);
     }
 
     res.status(200).json(result);
   } catch (error) {
     console.error('Airtable proxy error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Request details:', {
+      method: method || 'GET',
+      endpoint,
+      dataSize: data ? JSON.stringify(data).length : 0
+    });
+    res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 }

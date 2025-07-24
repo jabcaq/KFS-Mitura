@@ -32,26 +32,8 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
   ) => {
     let value = e.target.value;
     
-    // Auto-correct year values for date fields
-    if ((field === 'birth_date' || field === 'contract_start' || field === 'contract_end') && value) {
-      const datePattern = /^(\d{4})-(\d{2})-(\d{2})$/;
-      const match = value.match(datePattern);
-      
-      if (match) {
-        let year = parseInt(match[1], 10);
-        const month = match[2];
-        const day = match[3];
-        
-        // Auto-correct year limits
-        if (year < 1900) {
-          year = 1900;
-        } else if (year > 2100) {
-          year = 2100;
-        }
-        
-        value = `${year}-${month}-${day}`;
-      }
-    }
+    // No automatic date corrections - let user input naturally
+    // Date validation will be handled during form submission
     
     setFormData(prev => ({ ...prev, [field]: value }));
     
@@ -60,11 +42,23 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
     
-    // Real-time date validation for date fields
-    if ((field === 'birth_date' || field === 'contract_start' || field === 'contract_end') && value) {
+    // No real-time validation for dates - validate only on blur/save for better UX
+  };
+
+  // Handle date field blur for smooth UX
+  const handleDateBlur = (field: keyof Employee) => (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    // Only validate on blur if field has value
+    if (value && (field === 'birth_date' || field === 'contract_start' || field === 'contract_end')) {
       const dateError = validateDate(value);
       if (dateError) {
         setErrors(prev => ({ ...prev, [field]: dateError }));
+      } else {
+        // Clear error if date is now valid
+        if (errors[field]) {
+          setErrors(prev => ({ ...prev, [field]: '' }));
+        }
       }
     }
   };
@@ -293,7 +287,7 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                   type="date"
                   value={formData.birth_date || ''}
                   onChange={handleChange('birth_date')}
-                  onInput={(e) => handleChange('birth_date')(e as React.ChangeEvent<HTMLInputElement>)}
+                  onBlur={handleDateBlur('birth_date')}
                   error={!!errors.birth_date}
                   min="1900-01-01"
                   max="2100-12-31"
@@ -416,7 +410,7 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                 type="date"
                 value={formData.contract_start || ''}
                 onChange={handleChange('contract_start')}
-                onInput={(e) => handleChange('contract_start')(e as React.ChangeEvent<HTMLInputElement>)}
+                onBlur={handleDateBlur('contract_start')}
                 error={!!errors.contract_start}
                 min="1900-01-01"
                 max="2100-12-31"
@@ -429,7 +423,7 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                 type="date"
                 value={formData.contract_end || ''}
                 onChange={handleChange('contract_end')}
-                onInput={(e) => handleChange('contract_end')(e as React.ChangeEvent<HTMLInputElement>)}
+                onBlur={handleDateBlur('contract_end')}
                 error={!!errors.contract_end}
                 min="1900-01-01"
                 max="2100-12-31"

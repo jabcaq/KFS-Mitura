@@ -5,6 +5,31 @@ import type {
   Employee
 } from '../types';
 
+// Helper function to calculate age from birth date
+const calculateAgeFromDate = (birthDate: string): number => {
+  if (!birthDate) return 0;
+  
+  const birth = new Date(birthDate);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  
+  return age;
+};
+
+// Helper function to convert age back to approximate birth date for frontend compatibility
+const approximateBirthDate = (age: number): string => {
+  if (!age || age <= 0) return '';
+  
+  const currentYear = new Date().getFullYear();
+  const birthYear = currentYear - age;
+  return `${birthYear}-01-01`; // Approximate birth date
+};
+
 // Rozszerzony typ zwrotny dla danych aplikacji z submission_id
 export interface ApplicationData extends CompanyData {
   submission_id?: string;
@@ -98,7 +123,8 @@ export const submitToAirtable = async (
           total_employees: parseInt(formData.total_employees, 10) || 0,
           company_size: formData.company_size || '',
           balance_under_2m: formData.balance_under_2m || '',
-          status: 'Submitted'
+          status: 'Submitted',
+          'Link do formularza': `${window.location.origin}/wniosek/RECORD_ID_PLACEHOLDER`
         }
       }]
     };
@@ -111,6 +137,16 @@ export const submitToAirtable = async (
     const applicationRecordId = applicationResult.records[0].id;
     console.log('Utworzono główny rekord wniosku:', applicationRecordId);
 
+    // Update the form link with the actual record ID
+    await makeProxyRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${applicationRecordId}`, {
+      method: 'PATCH',
+      data: {
+        fields: {
+          'Link do formularza': `${window.location.origin}/wniosek/${applicationRecordId}`
+        }
+      }
+    });
+
     // KROK 2: Wyślij pracowników
     const employeeRecords: Array<any> = [];
     let employeeIndex = 1;
@@ -122,7 +158,8 @@ export const submitToAirtable = async (
           Id: `${submissionId}-${employeeIndex}`,
           employee_name: emp.name || '',
           gender: emp.gender || '',
-          birth_date: emp.birth_date || '',
+          age: emp.birth_date ? calculateAgeFromDate(emp.birth_date) : null,
+          Date: emp.birth_date || '', // New Date field in Airtable
           education: emp.education || '',
           position: emp.position || '',
           contract_type: emp.contract_type || '',
@@ -240,7 +277,7 @@ export const getEmployeesByApplicationId = async (applicationRecordId: string): 
           id: empData.id,
           name: fields.employee_name || '',
           gender: fields.gender || '',
-          birth_date: fields.birth_date || fields.contract_start || '',
+          birth_date: fields.Date || approximateBirthDate(fields.age) || '',
           education: fields.education || '',
           position: fields.position || '',
           contract_type: fields.contract_type || '',
@@ -295,7 +332,10 @@ export const updateEmployee = async (employeeRecordId: string, data: Partial<Emp
     
     if (data.name !== undefined) updateFields.employee_name = data.name;
     if (data.gender !== undefined) updateFields.gender = data.gender;
-    if (data.birth_date !== undefined) updateFields.birth_date = data.birth_date;
+    if (data.birth_date !== undefined) {
+      updateFields.age = data.birth_date ? calculateAgeFromDate(data.birth_date) : null;
+      updateFields.Date = data.birth_date || '';
+    }
     // ... więcej pól
 
     const requestBody = {
@@ -310,6 +350,52 @@ export const updateEmployee = async (employeeRecordId: string, data: Partial<Emp
     console.log('Dane pracownika zaktualizowane pomyślnie');
   } catch (error) {
     console.error('Błąd podczas aktualizacji pracownika:', error);
+    throw error;
+  }
+};
+
+// Dodaj nowego pracownika do istniejącej aplikacji
+export const addEmployeeToApplication = async (applicationRecordId: string, submissionId: string, employee: Employee): Promise<string> => {
+  try {
+    const employeeRecord = {
+      fields: {
+        Id: `${submissionId}-${Date.now()}`, // Unikalny ID
+        employee_name: employee.name || '',
+        gender: employee.gender || '',
+        age: employee.birth_date ? calculateAgeFromDate(employee.birth_date) : null,
+        Date: employee.birth_date || '',
+        education: employee.education || '',
+        position: employee.position || '',
+        contract_type: employee.contract_type || '',
+        contract_start: employee.contract_start || '',
+        contract_end: employee.contract_end || '',
+        application_id: [applicationRecordId]
+      }
+    };
+
+    const result = await makeProxyRequest(AIRTABLE_CONFIG.employeesTableId, {
+      method: 'POST',
+      data: { records: [employeeRecord] }
+    });
+
+    console.log('Dodano nowego pracownika:', result.records[0].id);
+    return result.records[0].id;
+  } catch (error) {
+    console.error('Błąd podczas dodawania pracownika:', error);
+    throw error;
+  }
+};
+
+// Usuń pracownika
+export const deleteEmployee = async (employeeRecordId: string): Promise<void> => {
+  try {
+    await makeProxyRequest(`${AIRTABLE_CONFIG.employeesTableId}/${employeeRecordId}`, {
+      method: 'DELETE'
+    });
+
+    console.log('Pracownik usunięty pomyślnie');
+  } catch (error) {
+    console.error('Błąd podczas usuwania pracownika:', error);
     throw error;
   }
 };
