@@ -5,15 +5,15 @@ const GUS_PROXY_URL = '/api/gus';
 const KAS_PROXY_URL = '/api/kas';
 
 export interface KASCompanyData {
-  subjects: Array<{
+  subject: {
     name: string;
     nip: string;
     statusVat: string;
     regon: string;
     pesel?: string;
     krs?: string;
-    residenceAddress: string;
-    workingAddress: string;
+    residenceAddress?: string;
+    workingAddress?: string;
     representatives?: Array<{
       companyName: string;
       firstName: string;
@@ -24,7 +24,7 @@ export interface KASCompanyData {
     authorizedClerks?: Array<{
       companyName: string;
       firstName: string;
-      lastName: string;
+      lastName: string;  
       pesel: string;
       nip: string;
     }>;
@@ -35,7 +35,10 @@ export interface KASCompanyData {
       pesel: string;
       nip: string;
     }>;
-  }>;
+    registrationLegalDate?: string;
+    accountNumbers?: string[];
+    hasVirtualAccounts?: boolean;
+  };
 }
 
 export interface GUSCompanyData {
@@ -109,8 +112,8 @@ export const fetchCompanyDataFromKAS = async (nip: string): Promise<GUSApiRespon
     const data = await response.json();
     console.log('🆓 KAS API response:', data);
 
-    if (data.success && data.result && data.result.subjects && data.result.subjects.length > 0) {
-      const subject = data.result.subjects[0];
+    if (data.success && data.result && data.result.subject) {
+      const subject = data.result.subject;
       
       // Convert KAS data to our format
       const mappedData: Partial<GUSCompanyData> = {
