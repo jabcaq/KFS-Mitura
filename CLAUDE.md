@@ -56,7 +56,33 @@ npm run lint
 ### 📋 Definicje i konfiguracja
 - `src/types/index.ts` - Wszystkie typy TypeScript
 - `src/constants/texts.ts` - Teksty aplikacji
-- `src/services/airtableService.ts` - Integracja z Airtable
+- `src/services/airtableServiceSecure.ts` - Integracja z Airtable (używa field IDs zamiast nazw)
+
+## 🗄️ Airtable Field ID Mapping
+
+**WAŻNE: Airtable integracja używa field IDs zamiast nazw dla odporności na zmiany**
+
+### Company Fields (Dane podmiotu)
+- `submission_id` → `fldb2lUUPqVyg3qHJ`
+- `company_name` → `fldWKTMxAQILBkDKr`
+- `company_nip` → `fldOrZL39rXQFy41x`
+- `representative_person` → `fldJBWA0L39GHhbzN`
+- `representative_email` → `fld2L1bM5FxT4p2Vs`
+- `link_do_formularza` → `fldGAYlZU8vRDh7lG`
+- (i pozostałe...)
+
+### Employee Fields (Pracownicy)
+- `employee_name` → `fld42KA9aezSe7K7k`
+- `gender` → `fldl8rKWB7NTlJzKa`
+- `education` → `fldQjfALgtcEAjg1m`
+- `position` → `fldQGMKAJcVwU2lAQ`
+- `application_id` → `fldX8Bp2PpYuVFpjy`
+- (i pozostałe...)
+
+**Dlaczego field IDs?**
+- Odporność na zmiany nazw pól w Airtable
+- Konsystentność API nawet gdy użytkownik zmienia nazwy
+- Mniejsze ryzyko błędów przy aktualizacjach schematu
 
 ### 🎨 Style i UI
 - `src/styles/design-system.css` - Zmienne CSS, kolory, spacing
