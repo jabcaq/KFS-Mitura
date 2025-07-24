@@ -499,14 +499,27 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
           </div>
           
           <div className="mt-4" style={{marginLeft: '16px', marginRight: '16px'}}>
-            <label className="flex items-center">
+            <label className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={data.account_not_interest_bearing === 'tak'}
                 onChange={(e) => onChange({ account_not_interest_bearing: e.target.checked ? 'tak' : 'nie' })}
-                className="mr-2"
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  marginRight: '12px',
+                  accentColor: 'var(--primary-600)',
+                  cursor: 'pointer'
+                }}
               />
-              <span>Konto nie jest oprocentowane</span>
+              <span style={{
+                color: 'var(--neutral-700)',
+                fontSize: '16px',
+                fontWeight: '500',
+                cursor: 'pointer'
+              }}>
+                Konto nie jest oprocentowane
+              </span>
             </label>
           </div>
         </div>
