@@ -224,12 +224,12 @@ export const submitToAirtable = async (
           [EMPLOYEE_FIELD_IDS.employee_name]: emp.name || '',
           [EMPLOYEE_FIELD_IDS.gender]: emp.gender || '',
           [EMPLOYEE_FIELD_IDS.age]: emp.birth_date ? calculateAgeFromDate(emp.birth_date) : null,
-          [EMPLOYEE_FIELD_IDS.birth_date]: emp.birth_date || '',
+          [EMPLOYEE_FIELD_IDS.birth_date]: emp.birth_date || null,
           [EMPLOYEE_FIELD_IDS.education]: emp.education || '',
           [EMPLOYEE_FIELD_IDS.position]: emp.position || '',
           [EMPLOYEE_FIELD_IDS.contract_type]: emp.contract_type || '',
-          [EMPLOYEE_FIELD_IDS.contract_start]: emp.contract_start || '',
-          [EMPLOYEE_FIELD_IDS.contract_end]: emp.contract_end || '',
+          [EMPLOYEE_FIELD_IDS.contract_start]: emp.contract_start || null,
+          [EMPLOYEE_FIELD_IDS.contract_end]: emp.contract_end || null,
           [EMPLOYEE_FIELD_IDS.created]: new Date().toISOString(),
           [EMPLOYEE_FIELD_IDS.company_link]: [applicationRecordId]
         }
@@ -404,7 +404,7 @@ export const updateEmployee = async (employeeRecordId: string, data: Partial<Emp
     if (data.gender !== undefined) updateFields[EMPLOYEE_FIELD_IDS.gender] = data.gender;
     if (data.birth_date !== undefined) {
       updateFields[EMPLOYEE_FIELD_IDS.age] = data.birth_date ? calculateAgeFromDate(data.birth_date) : null;
-      updateFields[EMPLOYEE_FIELD_IDS.birth_date] = data.birth_date || '';
+      updateFields[EMPLOYEE_FIELD_IDS.birth_date] = data.birth_date || null;
     }
     // Add more field mappings as needed
 
@@ -433,12 +433,12 @@ export const addEmployeeToApplication = async (applicationRecordId: string, subm
         [EMPLOYEE_FIELD_IDS.employee_name]: employee.name || '',
         [EMPLOYEE_FIELD_IDS.gender]: employee.gender || '',
         [EMPLOYEE_FIELD_IDS.age]: employee.birth_date ? calculateAgeFromDate(employee.birth_date) : null,
-        [EMPLOYEE_FIELD_IDS.birth_date]: employee.birth_date || '',
+        [EMPLOYEE_FIELD_IDS.birth_date]: employee.birth_date || null,
         [EMPLOYEE_FIELD_IDS.education]: employee.education || '',
         [EMPLOYEE_FIELD_IDS.position]: employee.position || '',
         [EMPLOYEE_FIELD_IDS.contract_type]: employee.contract_type || '',
-        [EMPLOYEE_FIELD_IDS.contract_start]: employee.contract_start || '',
-        [EMPLOYEE_FIELD_IDS.contract_end]: employee.contract_end || '',
+        [EMPLOYEE_FIELD_IDS.contract_start]: employee.contract_start || null,
+        [EMPLOYEE_FIELD_IDS.contract_end]: employee.contract_end || null,
         [EMPLOYEE_FIELD_IDS.company_link]: [applicationRecordId]
       }
     };
