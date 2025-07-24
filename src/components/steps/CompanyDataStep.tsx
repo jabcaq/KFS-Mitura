@@ -664,7 +664,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
           {showCorrespondenceAddress && (
             <div style={{display: 'flex', gap: '16px', alignItems: 'end', marginLeft: '16px', marginRight: '16px'}} className="animate-fade-in">
               <div style={{flex: '3'}}>
-                <FormField label={<><i className="fas fa-map-marker-alt" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Ulica i numer (korespondencja)</>} required>
+                <FormField label={<><i className="fas fa-map-marker-alt" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Ulica i numer (korespondencja)</>}>
                   <Input
                     value={data.correspondence_street}
                     onChange={handleChange('correspondence_street')}
