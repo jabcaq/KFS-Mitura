@@ -30,6 +30,7 @@ const EditForm: React.FC = () => {
     company_pkd: '',
     representative_person: '',
     representative_phone: '',
+    representative_email: '',
     contact_person_name: '',
     contact_person_phone: '',
     contact_person_email: '',
@@ -47,6 +48,7 @@ const EditForm: React.FC = () => {
     correspondence_address: '',
     bank_name: '',
     bank_account: '',
+    account_not_interest_bearing: '',
     total_employees: '',
     company_size: '',
     balance_under_2m: ''

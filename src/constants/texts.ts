@@ -14,7 +14,8 @@ export const TEXTS = {
     PRIMARY: "Podstawowe",
     MIDDLE: "Gimnazjalne", 
     VOCATIONAL: "Zasadnicze zawodowe",
-    SECONDARY: "Średnie",
+    SECONDARY_GENERAL: "Średnie ogólnokształcące",
+    SECONDARY_VOCATIONAL: "Średnie zawodowe",
     POST_SECONDARY: "Policealne",
     HIGHER: "Wyższe"
   },
@@ -26,6 +27,7 @@ export const TEXTS = {
     SPECIFIC_WORK: "Umowa o dzieło",
     B2B: "Kontrakt B2B",
     APPOINTMENT: "Powołanie",
+    OWNER: "Brak - właściciel firmy",
     OTHER: "Inne"
   },
   

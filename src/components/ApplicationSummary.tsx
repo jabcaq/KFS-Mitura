@@ -436,7 +436,8 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
                           {employee.education === 'podstawowe' ? 'Podstawowe' :
                            employee.education === 'gimnazjalne' ? 'Gimnazjalne' :
                            employee.education === 'zawodowe' ? 'Zawodowe' :
-                           employee.education === 'srednie' ? 'Średnie' :
+                           employee.education === 'srednie_ogolne' ? 'Średnie ogólnokształcące' :
+                           employee.education === 'srednie_zawodowe' ? 'Średnie zawodowe' :
                            employee.education === 'policealne' ? 'Policealne' :
                            employee.education === 'wyzsze' ? 'Wyższe' :
                            employee.education || '—'}

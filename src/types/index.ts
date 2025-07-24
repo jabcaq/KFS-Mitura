@@ -5,6 +5,7 @@ export interface CompanyData {
   company_pkd: string;
   representative_person: string;
   representative_phone: string;
+  representative_email: string;
   contact_person_name: string;
   contact_person_phone: string;
   contact_person_email: string;
@@ -31,6 +32,7 @@ export interface CompanyData {
   
   bank_name: string;
   bank_account: string;
+  account_not_interest_bearing: 'tak' | 'nie' | '';
   total_employees: string;
   company_size: 'mikro' | 'mały' | 'średni' | 'duży' | 'inne' | '';
   balance_under_2m: 'tak' | 'nie' | '';
@@ -42,9 +44,9 @@ export interface Employee {
   name: string;
   gender: 'M' | 'K' | '';
   birth_date: string;
-  education: 'podstawowe' | 'gimnazjalne' | 'zawodowe' | 'srednie' | 'policealne' | 'wyzsze' | '';
+  education: 'podstawowe' | 'gimnazjalne' | 'zawodowe' | 'srednie_ogolne' | 'srednie_zawodowe' | 'policealne' | 'wyzsze' | '';
   position: string;
-  contract_type: 'umowa_o_prace' | 'umowa_zlecenie' | 'umowa_dzielo' | 'b2b' | 'powolanie' | 'inne' | '';
+  contract_type: 'umowa_o_prace' | 'umowa_zlecenie' | 'umowa_dzielo' | 'b2b' | 'powolanie' | 'wlasciciel' | 'inne' | '';
   contract_start: string;
   contract_end: string;
   isEditing: boolean;

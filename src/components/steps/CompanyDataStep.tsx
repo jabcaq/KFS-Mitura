@@ -142,8 +142,9 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
           { field: 'company_name', label: 'Nazwa firmy' },
           { field: 'company_nip', label: 'NIP firmy' },
           { field: 'company_pkd', label: 'Główne PKD' },
-          { field: 'representative_person', label: 'Reprezentant' },
-          { field: 'representative_phone', label: 'Telefon reprezentanta' },
+          { field: 'representative_person', label: 'Osoba uprawniona' },
+          { field: 'representative_phone', label: 'Telefon osoby uprawnionej' },
+          { field: 'representative_email', label: 'Email osoby uprawnionej' },
           { field: 'contact_person_name', label: 'Osoba kontaktowa' },
           { field: 'contact_person_phone', label: 'Telefon osoby kontaktowej' },
           { field: 'contact_person_email', label: 'Email osoby kontaktowej' },
@@ -288,7 +289,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
             </FormField>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{marginLeft: '16px', marginRight: '16px'}}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" style={{marginLeft: '16px', marginRight: '16px'}}>
             <div>
               <FormField label={<><i className="fas fa-industry" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Główne PKD</>} required error={errors.company_pkd}>
                 <Input
@@ -301,12 +302,38 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
             </div>
 
             <div>
-              <FormField label={<><i className="fas fa-user-tie" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Reprezentant</>} required error={errors.representative_person}>
+              <FormField label={<><i className="fas fa-user-tie" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Osoba uprawniona do podpisania dokumentów</>} required error={errors.representative_person}>
                 <Input
                   value={data.representative_person}
                   onChange={handleChange('representative_person')}
                   placeholder="Imię i nazwisko"
                   error={!!errors.representative_person}
+                />
+              </FormField>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{marginLeft: '16px', marginRight: '16px'}}>
+            <div>
+              <FormField label={<><i className="fas fa-phone" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Telefon osoby uprawnionej</>} required error={errors.representative_phone}>
+                <Input
+                  placeholder="123 456 789"
+                  type="tel"
+                  value={data.representative_phone}
+                  onChange={handleChange('representative_phone')}
+                  error={!!errors.representative_phone}
+                />
+              </FormField>
+            </div>
+            
+            <div>
+              <FormField label={<><i className="fas fa-envelope" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Email osoby uprawnionej</>} required error={errors.representative_email}>
+                <Input
+                  placeholder="email@firma.pl"
+                  type="email"
+                  value={data.representative_email}
+                  onChange={handleChange('representative_email')}
+                  error={!!errors.representative_email}
                 />
               </FormField>
             </div>
@@ -407,27 +434,15 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
           <h4 style={{fontSize: '16px', fontWeight: 'bold', color: 'var(--neutral-700)', marginBottom: '16px', display: 'flex', alignItems: 'center', backgroundColor: 'var(--neutral-100)', padding: '12px 16px', borderRadius: '8px', borderLeft: '4px solid var(--neutral-500)'}} className="shadow-sm">
             <span style={{marginRight: '8px'}}>📞</span>Kontakt
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" style={{marginLeft: '16px', marginRight: '16px'}}>
-            <div>
-              <FormField label={<><i className="fas fa-phone" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>{TEXTS.LABELS.REPRESENTATIVE_PHONE}</>} required>
-                <Input
-                  placeholder={TEXTS.PLACEHOLDERS.PHONE}
-                  type="tel"
-                  value={data.representative_phone}
-                  onChange={handleChange('representative_phone')}
-                />
-              </FormField>
-            </div>
-            
-            <div>
-              <FormField label={<><i className="fas fa-user" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Osoba kontaktowa</>} required>
-                <Input
-                  placeholder="Imię i nazwisko"
-                  value={data.contact_person_name}
-                  onChange={handleChange('contact_person_name')}
-                />
-              </FormField>
-            </div>
+          <div className="mb-4" style={{marginLeft: '16px', marginRight: '16px'}}>
+            <FormField label={<><i className="fas fa-user" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Osoba kontaktowa</>} required error={errors.contact_person_name}>
+              <Input
+                placeholder="Imię i nazwisko"
+                value={data.contact_person_name}
+                onChange={handleChange('contact_person_name')}
+                error={!!errors.contact_person_name}
+              />
+            </FormField>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{marginLeft: '16px', marginRight: '16px'}}>
@@ -481,6 +496,18 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                 />
               </FormField>
             </div>
+          </div>
+          
+          <div className="mt-4" style={{marginLeft: '16px', marginRight: '16px'}}>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={data.account_not_interest_bearing === 'tak'}
+                onChange={(e) => onChange({ account_not_interest_bearing: e.target.checked ? 'tak' : 'nie' })}
+                className="mr-2"
+              />
+              <span>Konto nie jest oprocentowane</span>
+            </label>
           </div>
         </div>
 

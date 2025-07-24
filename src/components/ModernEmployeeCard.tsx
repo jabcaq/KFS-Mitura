@@ -311,7 +311,8 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                       formData.education === 'podstawowe' ? TEXTS.EDUCATION.PRIMARY :
                       formData.education === 'gimnazjalne' ? TEXTS.EDUCATION.MIDDLE :
                       formData.education === 'zawodowe' ? TEXTS.EDUCATION.VOCATIONAL :
-                      formData.education === 'srednie' ? TEXTS.EDUCATION.SECONDARY :
+                      formData.education === 'srednie_ogolne' ? TEXTS.EDUCATION.SECONDARY_GENERAL :
+                      formData.education === 'srednie_zawodowe' ? TEXTS.EDUCATION.SECONDARY_VOCATIONAL :
                       formData.education === 'policealne' ? TEXTS.EDUCATION.POST_SECONDARY :
                       formData.education === 'wyzsze' ? TEXTS.EDUCATION.HIGHER : ''
                     }
@@ -327,7 +328,8 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                       { value: 'podstawowe', label: TEXTS.EDUCATION.PRIMARY },
                       { value: 'gimnazjalne', label: TEXTS.EDUCATION.MIDDLE },
                       { value: 'zawodowe', label: TEXTS.EDUCATION.VOCATIONAL },
-                      { value: 'srednie', label: TEXTS.EDUCATION.SECONDARY },
+                      { value: 'srednie_ogolne', label: TEXTS.EDUCATION.SECONDARY_GENERAL },
+                      { value: 'srednie_zawodowe', label: TEXTS.EDUCATION.SECONDARY_VOCATIONAL },
                       { value: 'policealne', label: TEXTS.EDUCATION.POST_SECONDARY },
                       { value: 'wyzsze', label: TEXTS.EDUCATION.HIGHER }
                     ].map(option => (
@@ -372,6 +374,7 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                       formData.contract_type === 'umowa_dzielo' ? TEXTS.CONTRACT_TYPE.SPECIFIC_WORK :
                       formData.contract_type === 'b2b' ? TEXTS.CONTRACT_TYPE.B2B :
                       formData.contract_type === 'powolanie' ? TEXTS.CONTRACT_TYPE.APPOINTMENT :
+                      formData.contract_type === 'wlasciciel' ? TEXTS.CONTRACT_TYPE.OWNER :
                       formData.contract_type === 'inne' ? TEXTS.CONTRACT_TYPE.OTHER : ''
                     }
                     onChange={() => {}}
@@ -388,6 +391,7 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                       { value: 'umowa_dzielo', label: TEXTS.CONTRACT_TYPE.SPECIFIC_WORK },
                       { value: 'b2b', label: TEXTS.CONTRACT_TYPE.B2B },
                       { value: 'powolanie', label: TEXTS.CONTRACT_TYPE.APPOINTMENT },
+                      { value: 'wlasciciel', label: TEXTS.CONTRACT_TYPE.OWNER },
                       { value: 'inne', label: TEXTS.CONTRACT_TYPE.OTHER }
                     ].map(option => (
                       <div
@@ -512,7 +516,8 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
             {formData.education === 'podstawowe' ? TEXTS.EDUCATION.PRIMARY :
              formData.education === 'gimnazjalne' ? TEXTS.EDUCATION.MIDDLE :
              formData.education === 'zawodowe' ? TEXTS.EDUCATION.VOCATIONAL :
-             formData.education === 'srednie' ? TEXTS.EDUCATION.SECONDARY :
+             formData.education === 'srednie_ogolne' ? TEXTS.EDUCATION.SECONDARY_GENERAL :
+             formData.education === 'srednie_zawodowe' ? TEXTS.EDUCATION.SECONDARY_VOCATIONAL :
              formData.education === 'policealne' ? TEXTS.EDUCATION.POST_SECONDARY :
              formData.education === 'wyzsze' ? TEXTS.EDUCATION.HIGHER :
              formData.education}
@@ -527,6 +532,7 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
              formData.contract_type === 'umowa_dzielo' ? TEXTS.CONTRACT_TYPE.SPECIFIC_WORK :
              formData.contract_type === 'b2b' ? TEXTS.CONTRACT_TYPE.B2B :
              formData.contract_type === 'powolanie' ? TEXTS.CONTRACT_TYPE.APPOINTMENT :
+             formData.contract_type === 'wlasciciel' ? TEXTS.CONTRACT_TYPE.OWNER :
              formData.contract_type === 'inne' ? TEXTS.CONTRACT_TYPE.OTHER :
              formData.contract_type}
           </span>

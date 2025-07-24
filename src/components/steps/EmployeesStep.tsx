@@ -236,7 +236,8 @@ const EmployeesStep: React.FC<EmployeesStepProps> = ({ employees, onChange }) =>
                         {employee.education === 'podstawowe' ? TEXTS.EDUCATION.PRIMARY :
                          employee.education === 'gimnazjalne' ? TEXTS.EDUCATION.MIDDLE :
                          employee.education === 'zawodowe' ? TEXTS.EDUCATION.VOCATIONAL :
-                         employee.education === 'srednie' ? TEXTS.EDUCATION.SECONDARY :
+                         employee.education === 'srednie_ogolne' ? TEXTS.EDUCATION.SECONDARY_GENERAL :
+                         employee.education === 'srednie_zawodowe' ? TEXTS.EDUCATION.SECONDARY_VOCATIONAL :
                          employee.education === 'policealne' ? TEXTS.EDUCATION.POST_SECONDARY :
                          employee.education === 'wyzsze' ? TEXTS.EDUCATION.HIGHER :
                          employee.education}

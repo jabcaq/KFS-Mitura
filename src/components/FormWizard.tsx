@@ -60,6 +60,7 @@ const getDefaultWizardData = (): WizardData => ({
     company_pkd: '',
     representative_person: '',
     representative_phone: '',
+    representative_email: '',
     contact_person_name: '',
     contact_person_phone: '',
     contact_person_email: '',
@@ -82,6 +83,7 @@ const getDefaultWizardData = (): WizardData => ({
     
     bank_name: '',
     bank_account: '',
+    account_not_interest_bearing: '',
     total_employees: '',
     company_size: '',
     balance_under_2m: ''
@@ -152,7 +154,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
         // Validate company data - required fields only (activity and correspondence addresses are optional)
         const required = [
           'company_name', 'company_nip', 'company_pkd', 
-          'representative_person', 'representative_phone',
+          'representative_person', 'representative_phone', 'representative_email',
           'contact_person_name', 'contact_person_phone', 'contact_person_email',
           'company_street', 'company_postal_code', 'company_city',
           'bank_name', 'bank_account', 'total_employees', 'company_size', 'balance_under_2m'
@@ -253,10 +255,10 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
         <div className="container">
           <div className="form-wizard-title">
             <h1>
-              Wniosek o sfinansowanie kształcenia ustawicznego
+              Formularz danych niezbędnych do przygotowania wniosku
             </h1>
             <p>
-              Wypełnij formularz krok po kroku, aby podać dane do wniosku
+              Wypełnij formularz krok po kroku, by przekazać dane niezbędne do przygotowania wniosku
             </p>
           </div>
           
@@ -327,7 +329,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
                         <path fillRule="evenodd" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" clipRule="evenodd"/>
                       </svg>
                     )}
-                    <span className="button-text">Wyślij wniosek</span>
+                    <span className="button-text">Wyślij dane</span>
                   </div>
                 ) : (
                   <div className="wizard-nav-button" onClick={handleNext}>
