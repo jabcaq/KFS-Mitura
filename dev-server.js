@@ -13,6 +13,77 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
+// KAS API endpoint (free API)
+app.get('/api/kas', async (req, res) => {
+  try {
+    const { nip } = req.query;
+    
+    if (!nip) {
+      res.status(400).json({ 
+        success: false, 
+        error: 'NIP parameter is required' 
+      });
+      return;
+    }
+
+    // Clean NIP - remove dashes and spaces
+    const cleanNip = nip.replace(/[-\s]/g, '');
+    
+    // Validate NIP format (10 digits)
+    if (!/^\d{10}$/.test(cleanNip)) {
+      res.status(400).json({
+        success: false,
+        error: 'Nieprawidłowy format NIP. NIP powinien zawierać 10 cyfr.'
+      });
+      return;
+    }
+
+    console.log(`🆓 Fetching KAS data for NIP: ${cleanNip}`);
+
+    const kasUrl = `https://wl-api.mf.gov.pl/api/search/nip/${cleanNip}?date=${new Date().toISOString().split('T')[0]}`;
+    
+    const response = await fetch(kasUrl, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'FormularzApp/1.0',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.log(`🆓 KAS API HTTP error: ${response.status}`);
+      res.status(200).json({ 
+        success: false, 
+        error: `KAS API error: ${response.status}`,
+        kasStatus: response.status 
+      });
+      return;
+    }
+
+    const data = await response.json();
+    console.log('🆓 KAS API response:', { 
+      success: true, 
+      hasSubjects: data.result?.subjects?.length > 0,
+      subjectsCount: data.result?.subjects?.length || 0
+    });
+
+    // Return the data in our standard format
+    res.status(200).json({ 
+      success: true, 
+      result: data.result,
+      source: 'KAS' 
+    });
+    
+  } catch (error) {
+    console.error('🆓 KAS API error:', error);
+    res.status(200).json({ 
+      success: false,
+      error: error.message,
+      source: 'KAS'
+    });
+  }
+});
+
 // GUS API endpoint
 app.get('/api/gus', async (req, res) => {
   const GUS_API_KEY = process.env.GUS_API_KEY;
@@ -166,6 +237,7 @@ app.all('/api/airtable', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Development API server running on port ${PORT}`);
+  console.log(`KAS endpoint: http://localhost:${PORT}/api/kas`);
   console.log(`GUS endpoint: http://localhost:${PORT}/api/gus`);
   console.log(`Airtable endpoint: http://localhost:${PORT}/api/airtable`);
 });

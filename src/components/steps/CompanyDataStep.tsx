@@ -74,9 +74,10 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
         console.log('🏢 GUS data mapped:', mappedData);
         onChange(mappedData);
         
-        // Simple success message
+        // Success message with source info
         const companyName = result.data.nazwy.pelna;
-        setGusMessage(`Pobrano dane dla: ${companyName}`);
+        const source = result.source === 'KAS' ? 'darmowego API KAS' : 'płatnego API GUS';
+        setGusMessage(`Pobrano dane dla: ${companyName} (źródło: ${source})`);
         setGusMessageType('success');
       } else {
         setGusMessage(result.error || 'Nie udało się pobrać danych z GUS');
