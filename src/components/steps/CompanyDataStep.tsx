@@ -3,7 +3,7 @@ import { FormField } from '../ui/FormField';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { TEXTS } from '../../constants/texts';
-import { fetchCompanyDataByNIP, mapGUSDataToCompanyData, validateNIP, formatNIP } from '../../services/gusService';
+import { fetchCompanyDataByNIP, mapGUSDataToCompanyData, mapKASDataToCompanyData, validateNIP, formatNIP } from '../../services/gusService';
 import type { CompanyData } from '../../types';
 
 interface CompanyDataStepProps {
@@ -70,14 +70,30 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
       const result = await fetchCompanyDataByNIP(data.company_nip);
       
       if (result.success && result.data) {
-        const mappedData = mapGUSDataToCompanyData(result.data);
-        console.log('🏢 GUS data mapped:', mappedData);
+        console.log('🏢 API result received:', result);
+        console.log('🏢 result.data:', result.data);
+        console.log('🏢 result.source:', result.source);
+        
+        let mappedData: Partial<CompanyData>;
+        let companyName: string;
+        
+        if (result.source === 'KAS') {
+          // Use KAS mapping function
+          mappedData = mapKASDataToCompanyData(result.data);
+          companyName = result.data.subject?.name || 'Nieznana firma';
+          console.log('🏢 KAS data mapped:', mappedData);
+        } else {
+          // Use GUS mapping function
+          mappedData = mapGUSDataToCompanyData(result.data);
+          companyName = result.data.nazwy?.pelna || 'Nieznana firma';
+          console.log('🏢 GUS data mapped:', mappedData);
+        }
+        
         onChange(mappedData);
         
-        // Success message with source info
-        const companyName = result.data.nazwy.pelna;
-        const source = result.source === 'KAS' ? 'darmowego API KAS' : 'płatnego API GUS';
-        setGusMessage(`Pobrano dane dla: ${companyName} (źródło: ${source})`);
+        // Success message without source info
+        console.log('🏢 Setting message for:', companyName, 'from source:', result.source);
+        setGusMessage(`Pobrano dane dla: ${companyName}`);
         setGusMessageType('success');
       } else {
         setGusMessage(result.error || 'Nie udało się pobrać danych z GUS');
