@@ -1,4 +1,4 @@
-// Company data types
+// Company data types - Updated to match actual Airtable fields
 export interface CompanyData {
   company_name: string;
   company_nip: string;
@@ -9,23 +9,9 @@ export interface CompanyData {
   contact_person_name: string;
   contact_person_phone: string;
   contact_person_email: string;
+  responsible_person_phone: string;
   
-  // Adres siedziby - rozdzielone pola
-  company_street: string;
-  company_postal_code: string;
-  company_city: string;
-  
-  // Miejsce działalności - rozdzielone pola  
-  activity_street: string;
-  activity_postal_code: string;
-  activity_city: string;
-  
-  // Adres korespondencji - rozdzielone pola
-  correspondence_street: string;
-  correspondence_postal_code: string;
-  correspondence_city: string;
-  
-  // Stare pola (do zachowania kompatybilności)
+  // Adresy jako pełne teksty (tak jak w Airtable)
   company_address: string;
   activity_place: string;
   correspondence_address: string;
@@ -38,15 +24,15 @@ export interface CompanyData {
   balance_under_2m: 'tak' | 'nie' | '';
 }
 
-// Employee data types
+// Employee data types - Updated to match actual Airtable options
 export interface Employee {
   id?: string;
   name: string;
   gender: 'M' | 'K' | '';
   birth_date: string;
-  education: 'podstawowe' | 'gimnazjalne' | 'zawodowe' | 'srednie_ogolne' | 'srednie_zawodowe' | 'policealne' | 'wyzsze' | '';
+  education: 'podstawowe' | 'gimnazjalne' | 'zawodowe' | 'srednie ogólnokształcące' | 'średnie zawodowe' | 'policealne' | 'wyzsze' | '';
   position: string;
-  contract_type: 'umowa_o_prace' | 'umowa_zlecenie' | 'umowa_dzielo' | 'b2b' | 'powolanie' | 'wlasciciel' | 'inne' | '';
+  contract_type: 'umowa o prace' | 'umowa zlecenie' | 'umowa dzielo' | 'b2b' | 'powolanie' | 'inne' | 'właściciel firmy' | '';
   contract_start: string;
   contract_end: string;
   isEditing: boolean;
