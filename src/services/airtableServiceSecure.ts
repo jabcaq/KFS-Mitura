@@ -129,17 +129,24 @@ const makeProxyRequest = async (endpoint: string, options: { method?: string; da
 // Pobieranie ostatniego ID z Airtable przez proxy
 export const getLastSubmissionId = async (): Promise<number> => {
   try {
-    const endpoint = `${AIRTABLE_CONFIG.applicationsTableId}?maxRecords=1&sort%5B0%5D%5Bfield%5D=${COMPANY_FIELD_IDS.submission_id}&sort%5B0%5D%5Bdirection%5D=desc`;
+    const endpoint = `${AIRTABLE_CONFIG.applicationsTableId}?maxRecords=1&sort%5B0%5D%5Bfield%5D=${COMPANY_FIELD_IDS.submission_id}&sort%5B0%5D%5Bdirection%5D=desc&returnFieldsByFieldId=true`;
     const data = await makeProxyRequest(endpoint);
+    
+    console.log('🔍 DEBUG: getLastSubmissionId response:', data);
     
     if (data.records && data.records.length > 0) {
       const lastId = data.records[0].fields[COMPANY_FIELD_IDS.submission_id];
+      console.log('🔍 DEBUG: last submission_id from DB:', lastId);
+      
       if (lastId && lastId.startsWith('KFS-')) {
-        return parseInt(lastId.replace('KFS-', ''), 10);
+        const numericPart = parseInt(lastId.replace('KFS-', ''), 10);
+        console.log('🔍 DEBUG: extracted numeric part:', numericPart);
+        return numericPart;
       }
       return parseInt(lastId, 10) || 0;
     }
     
+    console.log('🔍 DEBUG: No records found, returning 0');
     return 0;
   } catch (error) {
     console.warn('Nie udało się pobrać ostatniego ID, używam wartości domyślnej:', error);
@@ -151,7 +158,9 @@ export const getLastSubmissionId = async (): Promise<number> => {
 export const generateSubmissionId = async (): Promise<string> => {
   const lastId = await getLastSubmissionId();
   const newId = lastId + 1;
-  return `KFS-${newId.toString().padStart(4, '0')}`;
+  const formattedId = `KFS-${newId.toString().padStart(4, '0')}`;
+  console.log('🔍 DEBUG: generateSubmissionId - lastId:', lastId, 'newId:', newId, 'formatted:', formattedId);
+  return formattedId;
 };
 
 // Rzeczywiste wysyłanie do Airtable przez proxy

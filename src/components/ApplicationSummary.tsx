@@ -26,6 +26,7 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
   const [companyData, setCompanyData] = useState<ApplicationData | null>(propCompanyData || null);
   const [employees, setEmployees] = useState<EmployeeCollection>(propEmployees || {});
   const [submissionId, setSubmissionId] = useState<string>(propSubmissionId || '');
+  console.log('🔍 ApplicationSummary render - current submissionId state:', submissionId);
 
   // Ładowanie danych z Airtable - tylko jeśli nie przekazano przez props
   useEffect(() => {
