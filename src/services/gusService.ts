@@ -78,7 +78,7 @@ export interface GUSCompanyData {
 
 export interface GUSApiResponse {
   success: boolean;
-  data?: GUSCompanyData;
+  data?: GUSCompanyData | any; // Can be either GUS or KAS data
   error?: string;
   message?: string;
   source?: 'KAS' | 'GUS';
@@ -114,59 +114,16 @@ export const fetchCompanyDataFromKAS = async (nip: string): Promise<GUSApiRespon
 
     if (data.success && data.result && data.result.subject) {
       const subject = data.result.subject;
-      
-      // Convert KAS data to our format
-      const mappedData: Partial<GUSCompanyData> = {
-        nazwy: {
-          pelna: subject.name
-        },
-        numery: {
-          nip: subject.nip,
-          regon: subject.regon || '',
-          krs: subject.krs || ''
-        },
-        adres: {
-          // Parse address from KAS format
-          nr_domu: '',
-          miejscowosc: '',
-          kod: '',
-          poczta: '',
-          panstwo: 'POLSKA'
-        }
-      };
+      console.log('🆓 KAS subject data:', subject);
 
-      // Try to parse address
-      if (subject.workingAddress || subject.residenceAddress) {
-        const address = subject.workingAddress || subject.residenceAddress;
-        const addressParts = address.split(',').map((part: string) => part.trim());
-        
-        if (addressParts.length >= 2) {
-          const lastPart = addressParts[addressParts.length - 1];
-          const postalMatch = lastPart.match(/(\d{2}-\d{3})\s+(.+)/);
-          
-          if (postalMatch) {
-            mappedData.adres!.kod = postalMatch[1];
-            mappedData.adres!.miejscowosc = postalMatch[2];
-            mappedData.adres!.poczta = postalMatch[2];
-          }
-          
-          if (addressParts.length >= 2) {
-            mappedData.adres!.ulica = addressParts[0];
-            // Extract house number from street
-            const streetMatch = addressParts[0].match(/(.+)\s+(\d+.*)/);
-            if (streetMatch) {
-              mappedData.adres!.ulica = streetMatch[1];
-              mappedData.adres!.nr_domu = streetMatch[2];
-            }
-          }
-        }
-      }
-
-      return {
+      console.log('🆓 KAS returning raw result with source');
+      const result = {
         success: true,
-        data: mappedData as GUSCompanyData,
-        source: 'KAS'
+        data: data.result, // Return raw KAS data
+        source: 'KAS' as 'KAS' | 'GUS'
       };
+      console.log('🆓 KAS returning result:', result);
+      return result;
     }
 
     return {
@@ -258,6 +215,69 @@ export const fetchCompanyDataByNIP = async (nip: string): Promise<GUSApiResponse
   return {
     success: false,
     error: 'Nie znaleziono danych firmy ani w darmowym API KAS, ani w płatnym API GUS'
+  };
+};
+
+// Function to map KAS data to our CompanyData format
+export const mapKASDataToCompanyData = (kasData: any): Partial<CompanyData> => {
+  const subject = kasData.subject || kasData;
+  
+  // Parse address from KAS format
+  const workingAddress = subject.workingAddress || '';
+  const addressParts = workingAddress.split(',').map((part: string) => part.trim());
+  
+  let street = '';
+  let postalCode = '';
+  let city = '';
+  
+  if (addressParts.length >= 2) {
+    street = addressParts[0] || '';
+    const lastPart = addressParts[addressParts.length - 1];
+    const postalMatch = lastPart.match(/(\d{2}-\d{3})\s+(.+)/);
+    
+    if (postalMatch) {
+      postalCode = postalMatch[1];
+      city = postalMatch[2];
+    } else {
+      city = lastPart;
+    }
+  }
+
+  // Try to get representative from KAS data
+  let representativePerson = '';
+  
+  // Check representatives array first
+  if (subject.representatives && subject.representatives.length > 0) {
+    const rep = subject.representatives[0];
+    representativePerson = `${rep.firstName || ''} ${rep.lastName || ''}`.trim();
+  }
+  
+  // If no representatives, check authorized clerks
+  if (!representativePerson && subject.authorizedClerks && subject.authorizedClerks.length > 0) {
+    const clerk = subject.authorizedClerks[0];
+    representativePerson = `${clerk.firstName || ''} ${clerk.lastName || ''}`.trim();
+  }
+  
+  // If no specific person found, leave empty for user to fill
+  console.log('🆓 KAS representative data:', { 
+    representatives: subject.representatives, 
+    authorizedClerks: subject.authorizedClerks,
+    selectedRepresentative: representativePerson 
+  });
+
+  return {
+    company_name: subject.name || '',
+    company_nip: formatNIP(subject.nip) || '',
+    company_pkd: '', // KAS nie ma PKD - użytkownik musi wypełnić
+    company_street: street,
+    company_postal_code: postalCode,
+    company_city: city,
+    company_size: 'mikro' as '' | 'mikro' | 'mały' | 'średni' | 'duży' | 'inne',
+    representative_person: representativePerson,
+    // Legacy fields for compatibility
+    company_address: workingAddress,
+    activity_place: workingAddress,
+    correspondence_address: workingAddress
   };
 };
 
