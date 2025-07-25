@@ -45,8 +45,8 @@ dev-server.js
 *.log
 *.txt
 
-# API development files
-api/
+# API development files (commented out to allow Vercel functions)
+# api/
 
 # Debug files
 debug.html
