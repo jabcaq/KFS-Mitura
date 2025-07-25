@@ -36,7 +36,7 @@ export interface ApplicationData extends CompanyData {
   submission_id?: string;
 }
 
-// Secure configuration - używa backend proxy
+// Secure proxy configuration for Vercel
 const AIRTABLE_CONFIG = {
   proxyUrl: '/api/airtable',
   applicationsTableId: 'tbl2SOkYU0eBG2ZGj',
@@ -105,7 +105,7 @@ const EMPLOYEE_FIELD_IDS = {
 };
 
 // Helper function for making secure proxy requests
-const makeProxyRequest = async (endpoint: string, options: { method?: string; data?: unknown } = {}) => {
+const makeAirtableRequest = async (endpoint: string, options: { method?: string; data?: unknown } = {}) => {
   const response = await fetch(AIRTABLE_CONFIG.proxyUrl, {
     method: 'POST',
     headers: {
@@ -123,14 +123,20 @@ const makeProxyRequest = async (endpoint: string, options: { method?: string; da
     throw new Error(`Proxy error: ${response.status} - ${errorData}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Unknown proxy error');
+  }
+  
+  return result.data;
 };
 
 // Pobieranie ostatniego ID z Airtable przez proxy
 export const getLastSubmissionId = async (): Promise<number> => {
   try {
     const endpoint = `${AIRTABLE_CONFIG.applicationsTableId}?maxRecords=1&sort%5B0%5D%5Bfield%5D=${COMPANY_FIELD_IDS.submission_id}&sort%5B0%5D%5Bdirection%5D=desc&returnFieldsByFieldId=true`;
-    const data = await makeProxyRequest(endpoint);
+    const data = await makeAirtableRequest(endpoint);
     
     console.log('🔍 DEBUG: getLastSubmissionId response:', data);
     
@@ -203,7 +209,7 @@ export const submitToAirtable = async (
       }]
     };
 
-    const applicationResult = await makeProxyRequest(AIRTABLE_CONFIG.applicationsTableId, {
+    const applicationResult = await makeAirtableRequest(AIRTABLE_CONFIG.applicationsTableId, {
       method: 'POST',
       data: applicationData
     });
@@ -212,7 +218,7 @@ export const submitToAirtable = async (
     console.log('Utworzono główny rekord wniosku:', applicationRecordId);
 
     // Update the form link with the actual record ID
-    await makeProxyRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${applicationRecordId}`, {
+    await makeAirtableRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${applicationRecordId}`, {
       method: 'PATCH',
       data: {
         fields: {
@@ -252,7 +258,7 @@ export const submitToAirtable = async (
         records: employeeRecords
       };
 
-      await makeProxyRequest(AIRTABLE_CONFIG.employeesTableId, {
+      await makeAirtableRequest(AIRTABLE_CONFIG.employeesTableId, {
         method: 'POST',
         data: employeeData
       });
@@ -276,7 +282,7 @@ export const submitToAirtable = async (
 // Pobierz dane aplikacji po ID
 export const getApplicationById = async (recordId: string): Promise<ApplicationData> => {
   try {
-    const data = await makeProxyRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${recordId}?returnFieldsByFieldId=true`);
+    const data = await makeAirtableRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${recordId}?returnFieldsByFieldId=true`);
     console.log('📊 Pobrane dane aplikacji:', JSON.stringify(data, null, 2));
     const fields = data.fields;
     
@@ -324,7 +330,7 @@ export const getEmployeesByApplicationId = async (applicationRecordId: string): 
     console.log('🔍 Pobieranie pracowników dla aplikacji:', applicationRecordId);
     
     // KROK 1: Pobierz dane aplikacji żeby dostać listę ID pracowników
-    const appData = await makeProxyRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${applicationRecordId}?returnFieldsByFieldId=true`);
+    const appData = await makeAirtableRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${applicationRecordId}?returnFieldsByFieldId=true`);
     const employeeIds = appData.fields[COMPANY_FIELD_IDS.employees_link] || [];
     
     console.log('👥 ID pracowników z aplikacji:', employeeIds);
@@ -342,7 +348,7 @@ export const getEmployeesByApplicationId = async (applicationRecordId: string): 
       console.log(`🔍 Pobieranie pracownika ${i + 1}/${employeeIds.length}:`, empId);
       
       try {
-        const empData = await makeProxyRequest(`${AIRTABLE_CONFIG.employeesTableId}/${empId}?returnFieldsByFieldId=true`);
+        const empData = await makeAirtableRequest(`${AIRTABLE_CONFIG.employeesTableId}/${empId}?returnFieldsByFieldId=true`);
         const fields = empData.fields;
         
         console.log(`👤 Pracownik ${i + 1} dane:`, {
@@ -392,7 +398,7 @@ export const updateApplication = async (recordId: string, data: Partial<CompanyD
       fields: updateFields
     };
 
-    await makeProxyRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${recordId}`, {
+    await makeAirtableRequest(`${AIRTABLE_CONFIG.applicationsTableId}/${recordId}`, {
       method: 'PATCH',
       data: requestBody
     });
@@ -421,7 +427,7 @@ export const updateEmployee = async (employeeRecordId: string, data: Partial<Emp
       fields: updateFields
     };
 
-    await makeProxyRequest(`${AIRTABLE_CONFIG.employeesTableId}/${employeeRecordId}`, {
+    await makeAirtableRequest(`${AIRTABLE_CONFIG.employeesTableId}/${employeeRecordId}`, {
       method: 'PATCH',
       data: requestBody
     });
@@ -452,7 +458,7 @@ export const addEmployeeToApplication = async (applicationRecordId: string, subm
       }
     };
 
-    const result = await makeProxyRequest(AIRTABLE_CONFIG.employeesTableId, {
+    const result = await makeAirtableRequest(AIRTABLE_CONFIG.employeesTableId, {
       method: 'POST',
       data: { records: [employeeRecord] }
     });
@@ -468,7 +474,7 @@ export const addEmployeeToApplication = async (applicationRecordId: string, subm
 // Usuń pracownika
 export const deleteEmployee = async (employeeRecordId: string): Promise<void> => {
   try {
-    await makeProxyRequest(`${AIRTABLE_CONFIG.employeesTableId}/${employeeRecordId}`, {
+    await makeAirtableRequest(`${AIRTABLE_CONFIG.employeesTableId}/${employeeRecordId}`, {
       method: 'DELETE'
     });
 

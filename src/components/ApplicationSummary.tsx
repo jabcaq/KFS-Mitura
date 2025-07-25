@@ -220,7 +220,6 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
                     <div className="progress-step-description">Złożony pomyślnie</div>
                   </div>
                 </div>
-                <div className="progress-step-connector completed" aria-hidden="true" />
               </li>
 
               {/* Numer wniosku */}
@@ -239,7 +238,6 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
                     <div className="progress-step-description" style={{ fontFamily: 'monospace', fontSize: '16px', fontWeight: 'bold' }}>{submissionId || 'Ładowanie...'}</div>
                   </div>
                 </div>
-                <div className="progress-step-connector completed" aria-hidden="true" />
               </li>
 
               {/* Liczba pracowników */}
