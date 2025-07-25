@@ -37,8 +37,11 @@ export interface ApplicationData extends CompanyData {
 }
 
 // Secure proxy configuration
+// For local development, use production URLs since Vite dev server doesn't support serverless functions
+const isLocalhost = window.location.hostname === 'localhost';
+const BASE_URL = isLocalhost ? 'https://kfs-mitel.vercel.app' : '';
 const AIRTABLE_CONFIG = {
-  proxyUrl: '/api/airtable',
+  proxyUrl: `${BASE_URL}/api/airtable`,
   applicationsTableId: 'tbl2SOkYU0eBG2ZGj',
   employeesTableId: 'tblh7tsaWWwXxBgSi'
 };

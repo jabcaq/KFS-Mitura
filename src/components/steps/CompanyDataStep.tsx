@@ -3,7 +3,7 @@ import { FormField } from '../ui/FormField';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { TEXTS } from '../../constants/texts';
-import { fetchCompanyDataByNIP, mapGUSDataToCompanyData, mapKASDataToCompanyData, validateNIP, formatNIP } from '../../services/gusService';
+import { fetchCompanyDataByNIP, mapKASDataToCompanyData, validateNIP, formatNIP } from '../../services/gusService';
 import type { CompanyData } from '../../types';
 
 interface CompanyDataStepProps {
@@ -70,39 +70,40 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
       const result = await fetchCompanyDataByNIP(data.company_nip);
       
       if (result.success && result.data) {
-        console.log('🏢 API result received:', result);
-        console.log('🏢 result.data:', result.data);
-        console.log('🏢 result.source:', result.source);
         
         let mappedData: Partial<CompanyData>;
         let companyName: string;
         
-        if (result.source === 'KAS') {
-          // Use KAS mapping function
-          mappedData = mapKASDataToCompanyData(result.data);
-          companyName = result.data.subject?.name || 'Nieznana firma';
-          console.log('🏢 KAS data mapped:', mappedData);
-        } else {
-          // Use GUS mapping function
-          mappedData = mapGUSDataToCompanyData(result.data);
-          companyName = result.data.nazwy?.pelna || 'Nieznana firma';
-          console.log('🏢 GUS data mapped:', mappedData);
+        try {
+          if (result.source === 'KAS') {
+            mappedData = mapKASDataToCompanyData(result.data);
+            companyName = result.data.result?.subject?.name || result.data.subject?.name || result.data?.name || 'Nieznana firma';
+          } else {
+            const dataToMap = result.data.result || result.data;
+            mappedData = mapKASDataToCompanyData(dataToMap);
+            companyName = dataToMap.subject?.name || 'Nieznana firma';
+          }
+        } catch (mappingError) {
+          console.error('Error during data mapping:', mappingError instanceof Error ? mappingError.message : 'Unknown mapping error');
+          setGusMessage('Błąd podczas przetwarzania danych z GUS');
+          setGusMessageType('error');
+          setIsLoadingGUS(false);
+          return;
         }
         
         onChange(mappedData);
-        
-        // Success message without source info
-        console.log('🏢 Setting message for:', companyName, 'from source:', result.source);
         setGusMessage(`Pobrano dane dla: ${companyName}`);
         setGusMessageType('success');
+        setIsLoadingGUS(false);
       } else {
         setGusMessage(result.error || 'Nie udało się pobrać danych z GUS');
         setGusMessageType('error');
+        setIsLoadingGUS(false);
       }
-    } catch {
+    } catch (error) {
+      console.error('GUS data fetch error:', error instanceof Error ? error.message : 'Unknown error');
       setGusMessage('Błąd podczas pobierania danych z GUS');
       setGusMessageType('error');
-    } finally {
       setIsLoadingGUS(false);
     }
   };

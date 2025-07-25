@@ -1,8 +1,11 @@
 import type { CompanyData } from '../types';
 
 // Use our backend proxy instead of direct API call
-const GUS_PROXY_URL = '/api/gus';
-const KAS_PROXY_URL = '/api/kas';
+// For local development, use production URLs since Vite dev server doesn't support serverless functions
+const isLocalhost = window.location.hostname === 'localhost';
+const BASE_URL = isLocalhost ? 'https://kfs-mitel.vercel.app' : '';
+const GUS_PROXY_URL = `${BASE_URL}/api/gus`;
+const KAS_PROXY_URL = `${BASE_URL}/api/kas`;
 
 export interface KASCompanyData {
   subject: {
@@ -96,7 +99,6 @@ export const fetchCompanyDataFromKAS = async (nip: string): Promise<GUSApiRespon
       };
     }
 
-    console.log(`🆓 Trying free KAS API for NIP: ${cleanNip}`);
 
     const response = await fetch(`${KAS_PROXY_URL}?nip=${cleanNip}`, {
       method: 'GET',
@@ -110,20 +112,13 @@ export const fetchCompanyDataFromKAS = async (nip: string): Promise<GUSApiRespon
     }
 
     const data = await response.json();
-    console.log('🆓 KAS API response:', data);
 
-    if (data.success && data.result && data.result.subject) {
-      const subject = data.result.subject;
-      console.log('🆓 KAS subject data:', subject);
-
-      console.log('🆓 KAS returning raw result with source');
-      const result = {
+    if (data.success && data.data) {
+      return {
         success: true,
-        data: data.result, // Return raw KAS data
+        data: data.data,
         source: 'KAS' as 'KAS' | 'GUS'
       };
-      console.log('🆓 KAS returning result:', result);
-      return result;
     }
 
     return {
@@ -131,7 +126,7 @@ export const fetchCompanyDataFromKAS = async (nip: string): Promise<GUSApiRespon
       error: 'Brak danych w darmowym API KAS'
     };
   } catch (error) {
-    console.error('🆓 KAS API error:', error);
+    console.error('KAS API error:', error instanceof Error ? error.message : 'Unknown error');
     return {
       success: false,
       error: 'Błąd podczas pobierania danych z darmowego API KAS'
@@ -153,7 +148,6 @@ export const fetchCompanyDataFromGUS = async (nip: string): Promise<GUSApiRespon
       };
     }
 
-    console.log(`💰 Trying paid GUS API for NIP: ${cleanNip} through proxy`);
 
     const response = await fetch(`${GUS_PROXY_URL}?nip=${cleanNip}`, {
       method: 'GET',
@@ -168,8 +162,6 @@ export const fetchCompanyDataFromGUS = async (nip: string): Promise<GUSApiRespon
 
     const data = await response.json();
     
-    console.log('💰 GUS proxy response:', data);
-    
     if (data.success && data.data) {
       return {
         success: true,
@@ -183,7 +175,7 @@ export const fetchCompanyDataFromGUS = async (nip: string): Promise<GUSApiRespon
       };
     }
   } catch (error) {
-    console.error('💰 Error fetching GUS data:', error);
+    console.error('GUS API error:', error instanceof Error ? error.message : 'Unknown error');
     return {
       success: false,
       error: 'Błąd podczas pobierania danych z płatnego API GUS. Sprawdź połączenie internetowe.'
@@ -193,25 +185,18 @@ export const fetchCompanyDataFromGUS = async (nip: string): Promise<GUSApiRespon
 
 // Cascade function: try free KAS first, then paid GUS
 export const fetchCompanyDataByNIP = async (nip: string): Promise<GUSApiResponse> => {
-  console.log('🔄 Starting cascade search for NIP:', nip);
-  
   // Step 1: Try free KAS API
   const kasResult = await fetchCompanyDataFromKAS(nip);
   if (kasResult.success) {
-    console.log('✅ Found data in free KAS API');
     return kasResult;
   }
-  
-  console.log('⚠️ KAS API failed, trying paid GUS API...');
   
   // Step 2: If KAS fails, try paid GUS API
   const gusResult = await fetchCompanyDataFromGUS(nip);
   if (gusResult.success) {
-    console.log('✅ Found data in paid GUS API');
     return gusResult;
   }
   
-  console.log('❌ Both APIs failed');
   return {
     success: false,
     error: 'Nie znaleziono danych firmy ani w darmowym API KAS, ani w płatnym API GUS'
@@ -220,7 +205,17 @@ export const fetchCompanyDataByNIP = async (nip: string): Promise<GUSApiResponse
 
 // Function to map KAS data to our CompanyData format
 export const mapKASDataToCompanyData = (kasData: any): Partial<CompanyData> => {
-  const subject = kasData.subject || kasData;
+  // Try different possible structures for KAS data
+  let subject;
+  if (kasData.subject) {
+    subject = kasData.subject;
+  } else if (kasData.result && kasData.result.subject) {
+    subject = kasData.result.subject;
+  } else if (kasData.name || kasData.firma) {
+    subject = kasData;
+  } else {
+    subject = kasData;
+  }
   
   // Parse address from KAS format
   const workingAddress = subject.workingAddress || '';
@@ -257,17 +252,16 @@ export const mapKASDataToCompanyData = (kasData: any): Partial<CompanyData> => {
     const clerk = subject.authorizedClerks[0];
     representativePerson = `${clerk.firstName || ''} ${clerk.lastName || ''}`.trim();
   }
-  
-  // If no specific person found, leave empty for user to fill
-  console.log('🆓 KAS representative data:', { 
-    representatives: subject.representatives, 
-    authorizedClerks: subject.authorizedClerks,
-    selectedRepresentative: representativePerson 
-  });
 
-  return {
-    company_name: subject.name || '',
-    company_nip: formatNIP(subject.nip) || '',
+  // Extract company name from various possible field names
+  const companyName = subject.name || subject.firma || subject.nazwaFirmy || subject.nazwa || '';
+  
+  // Extract NIP from various possible field names  
+  const nipValue = subject.nip || subject.nipNum || subject.nipNumber || '';
+
+  const result = {
+    company_name: companyName,
+    company_nip: formatNIP(nipValue) || '',
     company_pkd: '', // KAS nie ma PKD - użytkownik musi wypełnić
     company_street: street,
     company_postal_code: postalCode,
@@ -279,28 +273,45 @@ export const mapKASDataToCompanyData = (kasData: any): Partial<CompanyData> => {
     activity_place: workingAddress,
     correspondence_address: workingAddress
   };
+  
+  return result;
 };
 
 // Function to map GUS data to our CompanyData format
 export const mapGUSDataToCompanyData = (gusData: GUSCompanyData): Partial<CompanyData> => {
+  // Validate required fields
+  if (!gusData) {
+    throw new Error('GUS data is empty');
+  }
+  
+  if (!gusData.adres) {
+    throw new Error('GUS data missing adres field');
+  }
+  
+  if (!gusData.nazwy) {
+    throw new Error('GUS data missing nazwy field');
+  }
+
   // Build street address
   let street = '';
   if (gusData.adres.ulica) {
-    street = `${gusData.adres.ulica} ${gusData.adres.nr_domu}`;
+    street = `${gusData.adres.ulica} ${gusData.adres.nr_domu || ''}`;
   } else {
-    street = gusData.adres.nr_domu;
+    street = gusData.adres.nr_domu || '';
   }
 
   // Build full address for legacy fields
-  const fullAddress = `${street}, ${gusData.adres.kod} ${gusData.adres.miejscowosc}`;
+  const fullAddress = `${street}, ${gusData.adres.kod || ''} ${gusData.adres.miejscowosc || ''}`;
 
   // Extract PKD code from description (try to find pattern like "62.01.Z")
-  const pkdMatch = gusData.stan.pkd_przewazajace_dzial.match(/(\d{2}\.\d{2}\.[\w])/);
+  const pkdDescription = gusData.stan?.pkd_przewazajace_dzial || '';
+  const pkdMatch = pkdDescription.match(/(\d{2}\.\d{2}\.[\w])/);
   const pkdCode = pkdMatch ? pkdMatch[1] : '';
 
   // Use company size from GUS data
   let companySize = '';
-  switch(gusData.stan.wielkosc?.toLowerCase()) {
+  const wielkoscValue = gusData.stan?.wielkosc?.toLowerCase() || '';
+  switch(wielkoscValue) {
     case 'mikro':
       companySize = 'mikro';
       break;
@@ -325,7 +336,7 @@ export const mapGUSDataToCompanyData = (gusData: GUSCompanyData): Partial<Compan
 
   return {
     company_name: gusData.nazwy.pelna || '',
-    company_nip: formatNIP(gusData.numery.nip) || '',
+    company_nip: formatNIP(gusData.numery?.nip || '') || '',
     company_pkd: pkdCode,
     company_street: street,
     company_postal_code: gusData.adres.kod || '',
@@ -340,7 +351,8 @@ export const mapGUSDataToCompanyData = (gusData: GUSCompanyData): Partial<Compan
 };
 
 // Function to format NIP with dashes
-export const formatNIP = (nip: string): string => {
+export const formatNIP = (nip: string | null | undefined): string => {
+  if (!nip) return '';
   const cleanNip = nip.replace(/[-\s]/g, '');
   if (cleanNip.length === 10) {
     return `${cleanNip.slice(0, 3)}-${cleanNip.slice(3, 6)}-${cleanNip.slice(6, 8)}-${cleanNip.slice(8, 10)}`;
