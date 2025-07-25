@@ -29,3 +29,24 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Test files and development scripts
+test-*.js
+*-test*.js
+browser-test-*.js
+complete-*.js
+check-*.js
+create-*.js
+discover-*.js
+get-*.js
+dev-server.js
+
+# Development logs
+*.log
+*.txt
+
+# API development files
+api/
+
+# Debug files
+debug.html

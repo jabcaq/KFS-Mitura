@@ -347,19 +347,20 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4" style={{marginLeft: '16px', marginRight: '16px'}}>
             <div>
-              <FormField label={<><i className="fas fa-users" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>{TEXTS.LABELS.TOTAL_EMPLOYEES}</>} required>
+              <FormField label={<><i className="fas fa-users" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>{TEXTS.LABELS.TOTAL_EMPLOYEES}</>} required error={errors.total_employees}>
                 <Input
                   placeholder={TEXTS.PLACEHOLDERS.EMPLOYEE_COUNT}
                   type="number"
                   min="1"
                   value={data.total_employees}
                   onChange={handleChange('total_employees')}
+                  error={!!errors.total_employees}
                 />
               </FormField>
             </div>
             
             <div>
-              <FormField label={<><i className="fas fa-chart-bar" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Wielkość podmiotu</>} required>
+              <FormField label={<><i className="fas fa-chart-bar" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Wielkość podmiotu</>} required error={errors.company_size}>
                 <div className={`custom-dropdown ${openDropdown === 'company_size' ? 'open' : ''}`} ref={el => { if (el) dropdownRefs.current['company_size'] = el; }}>
                   <div className="custom-dropdown-input" onClick={() => setOpenDropdown(openDropdown === 'company_size' ? null : 'company_size')}>
                     <Input
@@ -367,6 +368,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                       onChange={handleChange('company_size')}
                       placeholder="Wybierz lub wpisz wielkość podmiotu"
                       onFocus={() => setOpenDropdown('company_size')}
+                      error={!!errors.company_size}
                     />
                     <span className="dropdown-arrow">▼</span>
                   </div>
@@ -395,7 +397,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
             </div>
             
             <div>
-              <FormField label={<><i className="fas fa-euro-sign" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Suma bilansowa &lt; 2 mln EUR?</>} required>
+              <FormField label={<><i className="fas fa-euro-sign" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Suma bilansowa &lt; 2 mln EUR?</>} required error={errors.balance_under_2m}>
                 <div className={`custom-dropdown ${openDropdown === 'balance_under_2m' ? 'open' : ''}`} ref={el => { if (el) dropdownRefs.current['balance_under_2m'] = el; }}>
                   <div className="custom-dropdown-input" onClick={() => setOpenDropdown(openDropdown === 'balance_under_2m' ? null : 'balance_under_2m')}>
                     <Input
@@ -403,6 +405,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                       onChange={handleChange('balance_under_2m')}
                       placeholder="Wybierz tak lub nie"
                       onFocus={() => setOpenDropdown('balance_under_2m')}
+                      error={!!errors.balance_under_2m}
                     />
                     <span className="dropdown-arrow">▼</span>
                   </div>
@@ -447,23 +450,25 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{marginLeft: '16px', marginRight: '16px'}}>
             <div>
-              <FormField label={<><i className="fas fa-mobile-alt" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>{TEXTS.LABELS.CONTACT_PHONE}</>} required>
+              <FormField label={<><i className="fas fa-mobile-alt" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>{TEXTS.LABELS.CONTACT_PHONE}</>} required error={errors.contact_person_phone}>
                 <Input
                   placeholder={TEXTS.PLACEHOLDERS.PHONE}
                   type="tel"
                   value={data.contact_person_phone}
                   onChange={handleChange('contact_person_phone')}
+                  error={!!errors.contact_person_phone}
                 />
               </FormField>
             </div>
             
             <div>
-              <FormField label={<><i className="fas fa-envelope" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>{TEXTS.LABELS.CONTACT_EMAIL}</>} required>
+              <FormField label={<><i className="fas fa-envelope" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>{TEXTS.LABELS.CONTACT_EMAIL}</>} required error={errors.contact_person_email}>
                 <Input
                   placeholder={TEXTS.PLACEHOLDERS.EMAIL}
                   type="email"
                   value={data.contact_person_email}
                   onChange={handleChange('contact_person_email')}
+                  error={!!errors.contact_person_email}
                 />
               </FormField>
             </div>
@@ -477,22 +482,24 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{marginLeft: '16px', marginRight: '16px'}}>
             <div>
-              <FormField label={<><i className="fas fa-university" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Nazwa banku</>} required>
+              <FormField label={<><i className="fas fa-university" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Nazwa banku</>} required error={errors.bank_name}>
                 <Input
                   value={data.bank_name}
                   onChange={handleChange('bank_name')}
                   placeholder="PKO Bank Polski"
+                  error={!!errors.bank_name}
                 />
               </FormField>
             </div>
             
             <div>
-              <FormField label={<><i className="fas fa-credit-card" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Numer konta bankowego</>} required>
+              <FormField label={<><i className="fas fa-credit-card" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Numer konta bankowego</>} required error={errors.bank_account}>
                 <Input
                   value={data.bank_account}
                   onChange={handleChange('bank_account')}
                   placeholder="PL 12 3456 7890 1234 5678 9012 3456"
                   pattern="PL\s?[0-9]{2}\s?[0-9]{4}\s?[0-9]{4}\s?[0-9]{4}\s?[0-9]{4}\s?[0-9]{4}\s?[0-9]{4}"
+                  error={!!errors.bank_account}
                 />
               </FormField>
             </div>
@@ -529,32 +536,35 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
           <h4 style={{fontSize: '16px', fontWeight: 'bold', color: 'var(--neutral-700)', marginBottom: '16px', display: 'flex', alignItems: 'center', backgroundColor: 'var(--neutral-100)', padding: '12px 16px', borderRadius: '8px', borderLeft: '4px solid var(--neutral-500)'}} className="shadow-sm">
             <span style={{marginRight: '8px'}}>🏢</span>Adres siedziby
           </h4>
-          <div style={{display: 'flex', gap: '16px', alignItems: 'end', marginBottom: '24px', marginLeft: '16px', marginRight: '16px'}}>
-            <div style={{flex: '3'}}>
-              <FormField label={<><i className="fas fa-map-marker-alt" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Ulica i numer</>} required>
+          <div className="address-form-layout">
+            <div className="address-street">
+              <FormField label={<><i className="fas fa-map-marker-alt" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Ulica i numer</>} required error={errors.company_street}>
                 <Input
                   value={data.company_street}
                   onChange={handleChange('company_street')}
                   placeholder="ul. Marszałkowska 1/2"
+                  error={!!errors.company_street}
                 />
               </FormField>
             </div>
-            <div style={{flex: '1'}}>
-              <FormField label={<><i className="fas fa-mail-bulk" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Kod pocztowy</>} required>
+            <div className="address-postal">
+              <FormField label={<><i className="fas fa-mail-bulk" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Kod pocztowy</>} required error={errors.company_postal_code}>
                 <Input
                   value={data.company_postal_code}
                   onChange={handleChange('company_postal_code')}
                   placeholder="00-000"
                   pattern="[0-9]{2}-[0-9]{3}"
+                  error={!!errors.company_postal_code}
                 />
               </FormField>
             </div>
-            <div style={{flex: '1'}}>
-              <FormField label={<><i className="fas fa-city" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Miejscowość</>} required>
+            <div className="address-city">
+              <FormField label={<><i className="fas fa-city" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Miejscowość</>} required error={errors.company_city}>
                 <Input
                   value={data.company_city}
                   onChange={handleChange('company_city')}
                   placeholder="Warszawa"
+                  error={!!errors.company_city}
                 />
               </FormField>
             </div>
@@ -595,8 +605,8 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
 
           {/* Pola adresu działalności */}
           {showActivityAddress && (
-            <div style={{display: 'flex', gap: '16px', alignItems: 'end', marginBottom: '24px', marginLeft: '16px', marginRight: '16px'}} className="animate-fade-in">
-              <div style={{flex: '3'}}>
+            <div className="address-form-layout animate-fade-in">
+              <div className="address-street">
                 <FormField label={<><i className="fas fa-map-marker-alt" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Ulica i numer (działalność)</>}>
                   <Input
                     value={data.activity_street}
@@ -605,7 +615,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                   />
                 </FormField>
               </div>
-              <div style={{flex: '1'}}>
+              <div className="address-postal">
                 <FormField label={<><i className="fas fa-mail-bulk" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Kod pocztowy</>}>
                   <Input
                     value={data.activity_postal_code}
@@ -615,7 +625,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                   />
                 </FormField>
               </div>
-              <div style={{flex: '1'}}>
+              <div className="address-city">
                 <FormField label={<><i className="fas fa-city" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Miejscowość</>}>
                   <Input
                     value={data.activity_city}
@@ -662,8 +672,8 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
 
           {/* Pola adresu korespondencji */}
           {showCorrespondenceAddress && (
-            <div style={{display: 'flex', gap: '16px', alignItems: 'end', marginLeft: '16px', marginRight: '16px'}} className="animate-fade-in">
-              <div style={{flex: '3'}}>
+            <div className="address-form-layout animate-fade-in">
+              <div className="address-street">
                 <FormField label={<><i className="fas fa-map-marker-alt" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Ulica i numer (korespondencja)</>}>
                   <Input
                     value={data.correspondence_street}
@@ -672,7 +682,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                   />
                 </FormField>
               </div>
-              <div style={{flex: '1'}}>
+              <div className="address-postal">
                 <FormField label={<><i className="fas fa-mail-bulk" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Kod pocztowy</>}>
                   <Input
                     value={data.correspondence_postal_code}
@@ -682,7 +692,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                   />
                 </FormField>
               </div>
-              <div style={{flex: '1'}}>
+              <div className="address-city">
                 <FormField label={<><i className="fas fa-city" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Miejscowość</>}>
                   <Input
                     value={data.correspondence_city}

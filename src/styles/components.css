@@ -43,23 +43,51 @@
 .form-wizard-step {
   background: white;
   border-radius: var(--radius-2xl);
-  padding: var(--space-20) 8rem;
-  margin: 0 -6rem;
+  padding: var(--space-8) var(--space-4);
+  margin: 0 var(--space-4);
   box-shadow: var(--shadow-xl);
   border: 1px solid var(--neutral-200);
   max-width: none;
   width: auto;
 }
 
+@media (min-width: 768px) {
+  .form-wizard-step {
+    padding: var(--space-12) var(--space-8);
+    margin: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .form-wizard-step {
+    padding: var(--space-20) 8rem;
+    margin: 0 -6rem;
+  }
+}
+
 .form-wizard-actions {
   background: white;
   border-radius: var(--radius-xl);
-  padding: var(--space-8) 8rem;
-  margin: var(--space-4) -6rem var(--space-4);
+  padding: var(--space-6) var(--space-4);
+  margin: var(--space-4) var(--space-4) var(--space-4);
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--neutral-200);
   max-width: none;
   width: auto;
+}
+
+@media (min-width: 768px) {
+  .form-wizard-actions {
+    padding: var(--space-8) var(--space-8);
+    margin: var(--space-4) var(--space-6) var(--space-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .form-wizard-actions {
+    padding: var(--space-8) 8rem;
+    margin: var(--space-4) -6rem var(--space-4);
+  }
 }
 
 /* === CONTAINER SYSTEM === */
@@ -89,21 +117,41 @@
   justify-content: center;
 }
 
+@media (max-width: 767px) {
+  .progress-steps {
+    margin: 0 var(--space-4);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 899px) {
+  .progress-steps {
+    margin: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1023px) {
+  .progress-steps {
+    margin: 0 var(--space-6);
+  }
+}
+
 .progress-steps-list {
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
   list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .progress-steps-list {
     flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: var(--space-12);
     width: 100%;
-    max-width: 800px;
     margin: 0 auto;
   }
 }
@@ -113,6 +161,12 @@
   align-items: center;
   flex: 1;
   position: relative;
+}
+
+@media (min-width: 900px) {
+  .progress-step {
+    min-width: 180px;
+  }
 }
 
 .progress-step-content {
@@ -267,7 +321,7 @@
 
 .form-error {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-2);
   font-size: var(--text-sm);
@@ -275,7 +329,7 @@
   font-weight: var(--font-medium);
   /* Position below the input field without layout shift */
   position: absolute;
-  top: calc(100% + 0.25rem); /* Position just below the input with small gap */
+  top: calc(100% + 0.05rem); /* Position very close to the input */
   left: 0;
   right: 0;
   height: 1.25rem;
@@ -762,6 +816,37 @@ select.modern-input {
 @media (min-width: 1024px) {
   .form-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* === ADDRESS FORM LAYOUT === */
+.address-form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: stretch;
+  margin-bottom: var(--space-6);
+  margin-left: var(--space-4);
+  margin-right: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .address-form-layout {
+    flex-direction: row;
+    align-items: end;
+    gap: var(--space-4);
+  }
+  
+  .address-form-layout .address-street {
+    flex: 3;
+  }
+  
+  .address-form-layout .address-postal {
+    flex: 1;
+  }
+  
+  .address-form-layout .address-city {
+    flex: 1;
   }
 }
 
