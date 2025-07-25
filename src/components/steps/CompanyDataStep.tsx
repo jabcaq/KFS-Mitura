@@ -19,7 +19,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
   const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  // GUS integration state
+  // GUS integration state  
   const [isLoadingGUS, setIsLoadingGUS] = useState(false);
   const [gusMessage, setGusMessage] = useState<string>('');
   const [gusMessageType, setGusMessageType] = useState<'success' | 'error' | ''>('');
@@ -94,16 +94,15 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
         onChange(mappedData);
         setGusMessage(`Pobrano dane dla: ${companyName}`);
         setGusMessageType('success');
-        setIsLoadingGUS(false);
       } else {
         setGusMessage(result.error || 'Nie udało się pobrać danych z GUS');
         setGusMessageType('error');
-        setIsLoadingGUS(false);
       }
     } catch (error) {
       console.error('GUS data fetch error:', error instanceof Error ? error.message : 'Unknown error');
       setGusMessage('Błąd podczas pobierania danych z GUS');
       setGusMessageType('error');
+    } finally {
       setIsLoadingGUS(false);
     }
   };
@@ -230,20 +229,8 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                   disabled={isLoadingGUS || !data.company_nip}
                   style={{minWidth: '160px', height: '48px'}}
                 >
-                  {isLoadingGUS ? (
-                    <>
-                      <svg className="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25"/>
-                        <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" className="opacity-75"/>
-                      </svg>
-                      Pobieranie...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-download mr-2"></i>
-                      Pobierz dane z GUS
-                    </>
-                  )}
+                  <i className="fas fa-download mr-2"></i>
+                  {isLoadingGUS ? 'Pobieranie...' : 'Pobierz dane z GUS'}
                 </Button>
               </div>
             </div>
