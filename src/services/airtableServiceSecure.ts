@@ -36,7 +36,7 @@ export interface ApplicationData extends CompanyData {
   submission_id?: string;
 }
 
-// Secure proxy configuration for Vercel
+// Secure configuration - only proxy, no exposed tokens
 const AIRTABLE_CONFIG = {
   proxyUrl: '/api/airtable',
   applicationsTableId: 'tbl2SOkYU0eBG2ZGj',
@@ -104,7 +104,7 @@ const EMPLOYEE_FIELD_IDS = {
   company_link: 'fldXDojrCPy6vnmp2'               // 'Dane podmiotu'
 };
 
-// Helper function for making secure proxy requests
+// Secure helper function - always uses proxy
 const makeAirtableRequest = async (endpoint: string, options: { method?: string; data?: unknown } = {}) => {
   const response = await fetch(AIRTABLE_CONFIG.proxyUrl, {
     method: 'POST',
