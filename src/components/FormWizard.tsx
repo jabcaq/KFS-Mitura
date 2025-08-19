@@ -226,7 +226,16 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
     try {
       // Wyślij dane do Airtable
       const result = await submitToAirtable(wizardData.companyData, wizardData.employees);
-      
+
+      // Send data to Make webhook
+      await fetch('https://hook.eu1.make.com/d62rb5lf4m8u7uzjf575f2c8eyco8w0k', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          companyData: wizardData.companyData,
+          employees: wizardData.employees
+        })
+      });
       // Po udanym wysłaniu, usuń dane z localStorage
       clearSavedData();
       
