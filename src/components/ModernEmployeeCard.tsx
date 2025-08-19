@@ -6,6 +6,9 @@ import { TEXTS } from '../constants/texts';
 import { formatEducation, formatContractType, normalizeEmployeeData } from '../utils/textUtils';
 import type { Employee } from '../types';
 
+const RESTRICTED_CONTRACTS = ['umowa zlecenie', 'umowa dzielo', 'b2b', 'inne'];
+const CONTRACT_WARNING = 'W szkoleniach dofinansowywanych ze środków Krajowego Funduszu Szkoleniowego mogą wziąć udział tylko osoby zatrudnione na umowę o pracę/właściciele firm/pracownicy wyłonieni poprzez wybór/powołanie';
+
 interface ModernEmployeeCardProps {
   employee: Employee;
   employeeNumber: number;
@@ -20,9 +23,14 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
   onRemove
 }) => {
   const [formData, setFormData] = useState(employee);
+  const [noEndDate, setNoEndDate] = useState(!formData.contract_end);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const dropdownRefs = useRef<Record<string, HTMLDivElement>>({});
+
+  useEffect(() => {
+    setNoEndDate(!formData.contract_end);
+  }, [formData.contract_end]);
 
   useEffect(() => {
     const normalizedEmployee = normalizeEmployeeData(employee);
@@ -392,6 +400,11 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                   </div>
                 )}
               </div>
+              {RESTRICTED_CONTRACTS.includes(formData.contract_type) && (
+                  <div style={{ color: '#d97706', marginTop: 8, fontWeight: 500, fontSize: 14 }}>
+                    {CONTRACT_WARNING}
+                  </div>
+              )}
             </FormField>
 
             <FormField label={<><i className="fas fa-play-circle" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>{TEXTS.LABELS.CONTRACT_START}</>} required error={errors.contract_start}>
@@ -407,16 +420,43 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
               />
             </FormField>
 
-            <FormField label={<><i className="fas fa-stop-circle" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>{TEXTS.LABELS.CONTRACT_END}</>} error={errors.contract_end}>
+            <FormField
+                label={
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <span>
+        <i className="fas fa-stop-circle" style={{ marginRight: '8px', color: 'var(--neutral-500)' }}></i>
+        {TEXTS.LABELS.CONTRACT_END}
+      </span>
+                    <label style={{ display: 'flex', alignItems: 'center', fontSize: 14, color: 'var(--neutral-700)', cursor: 'pointer', marginLeft: 8 }}>
+                      <input
+                          type="checkbox"
+                          checked={noEndDate}
+                          onChange={e => {
+                            setNoEndDate(e.target.checked);
+                            if (e.target.checked) {
+                              setFormData(prev => ({ ...prev, contract_end: '' }));
+                              if (errors.contract_end) setErrors(prev => ({ ...prev, contract_end: '' }));
+                            }
+                          }}
+                          style={{ marginRight: 6 }}
+                      />
+                      na czas nieokreślony
+                    </label>
+                  </div>
+                }
+                error={errors.contract_end}
+            >
               <Input
-                placeholder={TEXTS.PLACEHOLDERS.DATE}
-                type="date"
-                value={formData.contract_end || ''}
-                onChange={handleChange('contract_end')}
-                onBlur={handleDateBlur('contract_end')}
-                error={!!errors.contract_end}
-                min="1900-01-01"
-                max="2100-12-31"
+                  placeholder={TEXTS.PLACEHOLDERS.DATE}
+                  type="date"
+                  value={formData.contract_end || ''}
+                  onChange={handleChange('contract_end')}
+                  onBlur={handleDateBlur('contract_end')}
+                  error={!!errors.contract_end}
+                  min="1900-01-01"
+                  max="2100-12-31"
+                  disabled={noEndDate}
+                  style={noEndDate ? { backgroundColor: '#f3f4f6', color: '#9ca3af' } : {}}
               />
             </FormField>
           </div>

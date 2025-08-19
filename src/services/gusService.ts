@@ -218,8 +218,8 @@ export const mapKASDataToCompanyData = (kasData: any): Partial<CompanyData> => {
   }
   
   // Parse address from KAS format
-  const workingAddress = subject.workingAddress || '';
-  const addressParts = workingAddress.split(',').map((part: string) => part.trim());
+  const addressRaw = subject.workingAddress || subject.residenceAddress || '';
+  const addressParts = addressRaw.split(',').map((part: string) => part.trim());
   
   let street = '';
   let postalCode = '';
@@ -269,9 +269,9 @@ export const mapKASDataToCompanyData = (kasData: any): Partial<CompanyData> => {
     company_size: 'mikro' as '' | 'mikro' | 'mały' | 'średni' | 'duży' | 'inne',
     representative_person: representativePerson,
     // Legacy fields for compatibility
-    company_address: workingAddress,
-    activity_place: workingAddress,
-    correspondence_address: workingAddress
+    company_address: addressRaw,
+    activity_place: addressRaw,
+    correspondence_address: addressRaw
   };
   
   return result;

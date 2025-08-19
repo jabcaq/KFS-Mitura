@@ -3,7 +3,7 @@ import { FormField } from '../ui/FormField';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { TEXTS } from '../../constants/texts';
-import { fetchCompanyDataByNIP, mapKASDataToCompanyData, validateNIP, formatNIP } from '../../services/gusService';
+import { fetchCompanyDataByNIP, mapKASDataToCompanyData, mapGUSDataToCompanyData, validateNIP, formatNIP } from '../../services/gusService';
 import type { CompanyData } from '../../types';
 
 interface CompanyDataStepProps {
@@ -68,6 +68,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
 
     try {
       const result = await fetchCompanyDataByNIP(data.company_nip);
+      console.log('GUS API result:', result);
       
       if (result.success && result.data) {
         
@@ -80,7 +81,7 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
             companyName = result.data.result?.subject?.name || result.data.subject?.name || result.data?.name || 'Nieznana firma';
           } else {
             const dataToMap = result.data.result || result.data;
-            mappedData = mapKASDataToCompanyData(dataToMap);
+            mappedData = mapGUSDataToCompanyData(result.data);
             companyName = dataToMap.subject?.name || 'Nieznana firma';
           }
         } catch (mappingError) {
