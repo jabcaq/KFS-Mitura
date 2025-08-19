@@ -427,7 +427,7 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
         <i className="fas fa-stop-circle" style={{ marginRight: '8px', color: 'var(--neutral-500)' }}></i>
         {TEXTS.LABELS.CONTRACT_END}
       </span>
-                    <label style={{ display: 'flex', alignItems: 'center', fontSize: 14, color: 'var(--neutral-700)', cursor: 'pointer', marginLeft: 8 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', fontSize: 16, color: 'var(--neutral-700)', cursor: 'pointer', marginLeft: 8 }}>
                       <input
                           type="checkbox"
                           checked={noEndDate}
@@ -438,7 +438,13 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
                               if (errors.contract_end) setErrors(prev => ({ ...prev, contract_end: '' }));
                             }
                           }}
-                          style={{ marginRight: 6 }}
+                          style={{
+                            width: 18,
+                            height: 18,
+                            marginRight: 12,
+                            accentColor: 'var(--primary-600)',
+                            cursor: 'pointer'
+                          }}
                       />
                       na czas nieokreślony
                     </label>
