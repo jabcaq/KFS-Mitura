@@ -94,6 +94,7 @@ const EMPLOYEE_FIELD_IDS = {
     gender: 'fldzYdLbAH6RfPSUN',                    // 'Płeć'
     age: 'fldbciv6U2QXtJZgZ',                       // 'Wiek'
     birth_date: 'fldMLKZq9EJY9Rvk8',                // 'Data urodzenia'
+    disability_status: 'fldGnqt4B37bU8K8L',           // 'Orzeczenie'
     position: 'fldNCgGkvXYGuHpR7',                  // 'Stanowisko'
     education: 'fldRRQmwMtOjvyTKT',                 // 'Wykształcenie'
 
@@ -243,6 +244,7 @@ export const submitToAirtable = async (
                     [EMPLOYEE_FIELD_IDS.gender]: emp.gender || '',
                     [EMPLOYEE_FIELD_IDS.age]: emp.birth_date ? calculateAgeFromDate(emp.birth_date) : null,
                     [EMPLOYEE_FIELD_IDS.birth_date]: emp.birth_date || null,
+                    [EMPLOYEE_FIELD_IDS.disability_status]: emp.disability_status || false,
                     [EMPLOYEE_FIELD_IDS.education]: emp.education || '',
                     [EMPLOYEE_FIELD_IDS.position]: emp.position || '',
                     [EMPLOYEE_FIELD_IDS.contract_type]: emp.contract_type || '',
@@ -367,6 +369,7 @@ export const getEmployeesByApplicationId = async (applicationRecordId: string): 
                     name: fields[EMPLOYEE_FIELD_IDS.employee_name] || '',
                     gender: fields[EMPLOYEE_FIELD_IDS.gender] || '',
                     birth_date: fields[EMPLOYEE_FIELD_IDS.birth_date] || approximateBirthDate(fields[EMPLOYEE_FIELD_IDS.age]) || '',
+                    disability_status: fields[EMPLOYEE_FIELD_IDS.disability_status] || false,
                     education: fields[EMPLOYEE_FIELD_IDS.education] || '',
                     position: fields[EMPLOYEE_FIELD_IDS.position] || '',
                     contract_type: fields[EMPLOYEE_FIELD_IDS.contract_type] || '',
@@ -425,6 +428,7 @@ export const updateEmployee = async (employeeRecordId: string, data: Partial<Emp
             updateFields[EMPLOYEE_FIELD_IDS.age] = data.birth_date ? calculateAgeFromDate(data.birth_date) : null;
             updateFields[EMPLOYEE_FIELD_IDS.birth_date] = data.birth_date || null;
         }
+        if (data.disability_status !== undefined) updateFields[EMPLOYEE_FIELD_IDS.disability_status] = data.disability_status;
         // Add more field mappings as needed
 
         const requestBody = {
@@ -453,6 +457,7 @@ export const addEmployeeToApplication = async (applicationRecordId: string, subm
                 [EMPLOYEE_FIELD_IDS.gender]: employee.gender || '',
                 [EMPLOYEE_FIELD_IDS.age]: employee.birth_date ? calculateAgeFromDate(employee.birth_date) : null,
                 [EMPLOYEE_FIELD_IDS.birth_date]: employee.birth_date || null,
+                [EMPLOYEE_FIELD_IDS.disability_status]: employee.disability_status || false,
                 [EMPLOYEE_FIELD_IDS.education]: employee.education || '',
                 [EMPLOYEE_FIELD_IDS.position]: employee.position || '',
                 [EMPLOYEE_FIELD_IDS.contract_type]: employee.contract_type || '',

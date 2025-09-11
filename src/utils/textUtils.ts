@@ -111,6 +111,11 @@ export const normalizeEmployeeData = (employee: any): any => {
   
   const normalized = { ...employee };
   
+  // Ensure disability_status is always a boolean
+  if (normalized.disability_status === undefined || normalized.disability_status === null) {
+    normalized.disability_status = false;
+  }
+  
   // Normalize education values
   const educationMap: Record<string, string> = {
     'srednie_ogolne': 'srednie ogólnokształcące',

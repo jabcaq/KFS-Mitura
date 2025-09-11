@@ -42,6 +42,7 @@ export interface Employee {
     name: string;
     gender: 'M' | 'K' | '';
     birth_date: string;
+    disability_status: boolean;
     education: 'podstawowe' | 'gimnazjalne' | 'zawodowe' | 'srednie ogólnokształcące' | 'średnie zawodowe' | 'policealne' | 'wyższe' | '';
     position: string;
     contract_type: 'umowa o prace' | 'umowa zlecenie' | 'umowa dzielo' | 'b2b' | 'powolanie' | 'inne' | 'właściciel firmy' | '';

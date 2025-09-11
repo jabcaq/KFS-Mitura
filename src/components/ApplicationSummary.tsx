@@ -447,10 +447,17 @@ const ApplicationSummary: React.FC<ApplicationSummaryProps> = ({
                       </div>
 
                       {/* Typ umowy */}
-                      <div style={{ flex: '1 1 0', textAlign: 'center', margin: '0 5px', marginRight: '0px' }}>
+                      <div style={{ flex: '1 1 0', textAlign: 'center', margin: '0 5px' }}>
                         <div style={{fontSize: '12px', color: 'var(--neutral-500)', marginBottom: '2px'}}>Umowa</div>
                         <div style={{fontSize: '14px', fontWeight: '600', color: 'var(--neutral-800)'}}>
                           {formatContractType(employee.contract_type) || '—'}
+                        </div>
+                      </div>
+                      {/* Orzeczenie */}
+                      <div style={{ flex: '1 1 0', textAlign: 'center', margin: '0 5px', marginRight: '0px' }}>
+                        <div style={{fontSize: '12px', color: 'var(--neutral-500)', marginBottom: '2px'}}>Orzeczenie</div>
+                        <div style={{fontSize: '14px', fontWeight: '600', color: 'var(--neutral-800)'}}>
+                          {employee.disability_status ? 'Ma' : '—'}
                         </div>
                       </div>
 

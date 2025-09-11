@@ -204,6 +204,13 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ companyData, employees }) => {
                           {employee.contract_start}{employee.contract_end ? ` - ${employee.contract_end}` : ' (bezterminowa)'}
                         </span>
                                             </div>
+
+                                            <div style={{display: 'flex', alignItems: 'center', gap: '4px', height: '24px'}}>
+                                                <span style={{color: 'var(--neutral-600)'}}>♿</span>
+                                                <span style={{color: 'var(--neutral-800)', fontWeight: '600'}}>
+                          {employee.disability_status ? 'Ma orzeczenie' : 'Brak orzeczenia'}
+                        </span>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

@@ -305,6 +305,33 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
               </FormField>
             </div>
           </div>
+
+          {/* Checkbox orzeczenia pod sekcją danych osobowych */}
+          <div style={{marginLeft: '16px', marginRight: '16px', marginTop: '0px'}}>
+            <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+              <input
+                type="checkbox"
+                checked={formData.disability_status || false}
+                onChange={(e) => setFormData(prev => ({ ...prev, disability_status: e.target.checked }))}
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  marginRight: '12px',
+                  accentColor: 'var(--primary-600)',
+                  cursor: 'pointer'
+                }}
+              />
+              <span style={{
+                color: 'var(--neutral-700)',
+                fontSize: '16px',
+                fontWeight: '500',
+                cursor: 'pointer'
+              }}>
+                <i className="fas fa-wheelchair" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>
+                Ma orzeczenie o niepełnosprawności
+              </span>
+            </label>
+          </div>
         </div>
 
         {/* Sekcja wykształcenia i stanowiska */}
@@ -563,6 +590,12 @@ const ModernEmployeeCard: React.FC<ModernEmployeeCardProps> = ({
           </span>
         </div>
         
+        <div className="flex items-center gap-2" style={{height: '24px'}}>
+          <span style={{color: 'var(--neutral-600)'}}>♿</span>
+          <span style={{color: 'var(--neutral-800)', fontWeight: '600'}}>
+            {formData.disability_status ? 'Ma orzeczenie' : 'Brak orzeczenia'}
+          </span>
+        </div>
         
         <div className="flex items-center gap-2 md:col-span-2 lg:col-span-1">
           <span style={{color: 'var(--neutral-600)'}}>💼</span>

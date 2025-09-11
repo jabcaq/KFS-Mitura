@@ -135,6 +135,7 @@ const EditForm: React.FC = () => {
                         employee.name !== originalEmployee.name ||
                         employee.gender !== originalEmployee.gender ||
                         employee.birth_date !== originalEmployee.birth_date ||
+                        employee.disability_status !== originalEmployee.disability_status ||
                         employee.education !== originalEmployee.education ||
                         employee.position !== originalEmployee.position ||
                         employee.contract_type !== originalEmployee.contract_type ||

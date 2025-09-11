@@ -53,6 +53,7 @@ const EmployeesStep: React.FC<EmployeesStepProps> = ({
             name: '',
             gender: '',
             birth_date: '',
+            disability_status: false,
             education: '',
             position: '',
             contract_type: '',
