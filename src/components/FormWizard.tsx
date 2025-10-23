@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ProgressSteps } from './ui/ProgressSteps';
 import CompanyDataStep from './steps/CompanyDataStep';
 import EmployeesStep from './steps/EmployeesStep';
@@ -122,6 +122,7 @@ const loadSavedData = (): WizardData => {
 
 const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
     const navigate = useNavigate();
+    const { handlowiec_id } = useParams<{ handlowiec_id?: string }>();
     const [currentStep, setCurrentStep] = useState(1); // DEBUG: Start at company step
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -129,6 +130,13 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
     const [employeeCountValidationError, setEmployeeCountValidationError] = useState<string>('');
 
     const [wizardData, setWizardData] = useState<WizardData>(loadSavedData);
+
+    // Log handlowiec_id when component mounts
+    useEffect(() => {
+        if (handlowiec_id) {
+            console.log('🔍 Handlowiec ID z URL:', handlowiec_id);
+        }
+    }, [handlowiec_id]);
 
     // Auto-save do localStorage przy każdej zmianie danych
     useEffect(() => {
@@ -281,13 +289,18 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
             const result = await submitToAirtable(wizardData.companyData, wizardData.employees);
 
             // Send data to Make webhook
-            await fetch('https://hook.eu1.make.com/d62rb5lf4m8u7uzjf575f2c8eyco8w0k', {
+            const webhookData = {
+                companyData: wizardData.companyData,
+                employees: wizardData.employees,
+                ...(handlowiec_id && { handlowiec_id })
+            };
+            
+            console.log('📤 Wysyłanie danych do webhooka:', webhookData);
+            
+            await fetch('https://kamil109-20109.wykr.es/webhook/13263fa8-a07c-47cf-8453-823742c707bb', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    companyData: wizardData.companyData,
-                    employees: wizardData.employees
-                })
+                body: JSON.stringify(webhookData)
             });
             // Po udanym wysłaniu, usuń dane z localStorage
             clearSavedData();

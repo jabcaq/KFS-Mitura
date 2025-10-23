@@ -17,6 +17,10 @@ const App: React.FC = () => {
             element={<FormWizard onSubmissionSuccess={handleSubmissionSuccess} />} 
           />
           <Route 
+            path="/:handlowiec_id" 
+            element={<FormWizard onSubmissionSuccess={handleSubmissionSuccess} />} 
+          />
+          <Route 
             path="/wniosek/:id" 
             element={<EditForm />} 
           />
