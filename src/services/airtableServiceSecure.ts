@@ -258,17 +258,33 @@ export const submitToAirtable = async (
             employeeIndex++;
         });
 
+        // KROK 2B: Wyślij pracowników w partiach po 10 (limit Airtable API)
         if (employeeRecords.length > 0) {
-            const employeeData = {
-                records: employeeRecords
-            };
+            const BATCH_SIZE = 10;
+            const totalBatches = Math.ceil(employeeRecords.length / BATCH_SIZE);
+            
+            console.log(`📦 Tworzenie ${employeeRecords.length} pracowników w ${totalBatches} partiach...`);
 
-            await makeAirtableRequest(AIRTABLE_CONFIG.employeesTableId, {
-                method: 'POST',
-                data: employeeData
-            });
+            for (let i = 0; i < totalBatches; i++) {
+                const startIdx = i * BATCH_SIZE;
+                const endIdx = Math.min(startIdx + BATCH_SIZE, employeeRecords.length);
+                const batch = employeeRecords.slice(startIdx, endIdx);
 
-            console.log('Utworzono pracowników');
+                console.log(`📤 Wysyłanie partii ${i + 1}/${totalBatches} (${batch.length} pracowników)...`);
+
+                const employeeData = {
+                    records: batch
+                };
+
+                await makeAirtableRequest(AIRTABLE_CONFIG.employeesTableId, {
+                    method: 'POST',
+                    data: employeeData
+                });
+
+                console.log(`✅ Partia ${i + 1}/${totalBatches} utworzona pomyślnie`);
+            }
+
+            console.log(`🎉 Utworzono wszystkich ${employeeRecords.length} pracowników`);
         }
 
         return {
