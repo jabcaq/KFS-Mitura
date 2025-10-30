@@ -9,6 +9,15 @@ import { submitToAirtable } from '../services/airtableServiceSecure';
 import { normalizeEmployeeData } from '../utils/textUtils';
 import type { CompanyData, EmployeeCollection } from '../types';
 
+// Normalizuje identyfikator handlowca do formatu SALES-XXX (3 cyfry, wielkie litery)
+function normalizeHandlowiecId(raw?: string): string | undefined {
+    if (!raw) return undefined;
+    const match = raw.match(/(\d+)$/);
+    const num = match ? match[1] : '';
+    const padded = num ? num.padStart(3, '0') : '';
+    return `SALES-${padded}`;
+}
+
 interface FormWizardProps {
     onSubmissionSuccess: (data: { companyData: CompanyData; employees: EmployeeCollection }) => void;
 }
@@ -292,7 +301,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ onSubmissionSuccess }) => {
             const webhookData = {
                 companyData: wizardData.companyData,
                 employees: wizardData.employees,
-                ...(handlowiec_id && { handlowiec_id })
+                ...(handlowiec_id && { handlowiec_id: normalizeHandlowiecId(handlowiec_id) })
             };
             
             console.log('📤 Wysyłanie danych do webhooka:', webhookData);
