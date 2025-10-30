@@ -69,12 +69,15 @@ const getDefaultWizardData = (): WizardData => ({
         company_nip: '',
         company_pkd: '',
         representative_person: '',
+        representative_position: '',
         representative_phone: '',
         representative_email: '',
         contact_person_name: '',
+        contact_person_position: '',
         contact_person_phone: '',
         contact_person_email: '',
         responsible_person_phone: '',
+        selected_training: '',
 
         // Nowe pola adresowe
         company_street: '',

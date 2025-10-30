@@ -4,12 +4,15 @@ export interface CompanyData {
     company_nip: string;
     company_pkd: string;
     representative_person: string;
+    representative_position: string;
     representative_phone: string;
     representative_email: string;
     contact_person_name: string;
+    contact_person_position: string;
     contact_person_phone: string;
     contact_person_email: string;
     responsible_person_phone: string;
+    selected_training: string;
 
     // Adresy jako pełne teksty (tak jak w Airtable)
     company_address: string;

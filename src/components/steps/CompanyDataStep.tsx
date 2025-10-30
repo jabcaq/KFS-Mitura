@@ -12,6 +12,17 @@ interface CompanyDataStepProps {
   onValidate?: () => boolean;
 }
 
+// Lista dostępnych szkoleń
+const TRAINING_OPTIONS = [
+  'Kompleksowy dedykowany dla (branża) kurs sztucznej inteligencji A.I.',
+  'Automatyzacja procesów w (branża) z zastosowaniem technologii A.I.',
+  'Silna marka B2B w (branża). Jak zbudować mocny brand, który sprzedaje z wykorzystaniem technologii A.I.',
+  'Kompleksowy dedykowany dla (branża) kurs Video Marketing w Biznesie.',
+  'StresOUT – zarządzanie stresem oraz profilaktyka zdrowia psychicznego (branża)',
+  'PowerMind – trening zarządzania osobistym potencjałem (branża)',
+  'EffectiveTeam – poprawa zarządzania i komunikacji w firmie (branża)'
+];
+
 const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onValidate }) => {
   const [showActivityAddress, setShowActivityAddress] = useState(false);
   const [showCorrespondenceAddress, setShowCorrespondenceAddress] = useState(false);
@@ -143,10 +154,13 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
           { field: 'company_name', label: 'Nazwa firmy' },
           { field: 'company_nip', label: 'NIP firmy' },
           { field: 'company_pkd', label: 'Główne PKD' },
+          { field: 'selected_training', label: 'Wybór szkolenia' },
           { field: 'representative_person', label: 'Osoba uprawniona' },
+          { field: 'representative_position', label: 'Stanowisko osoby uprawnionej' },
           { field: 'representative_phone', label: 'Telefon osoby uprawnionej' },
           { field: 'representative_email', label: 'Email osoby uprawnionej' },
           { field: 'contact_person_name', label: 'Osoba kontaktowa' },
+          { field: 'contact_person_position', label: 'Stanowisko osoby kontaktowej' },
           { field: 'contact_person_phone', label: 'Telefon osoby kontaktowej' },
           { field: 'contact_person_email', label: 'Email osoby kontaktowej' },
           { field: 'company_street', label: 'Adres siedziby - ulica' },
@@ -257,6 +271,43 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
           </div>
         </div>
 
+        {/* Sekcja wyboru szkolenia */}
+        <div className="mb-6">
+          <h4 style={{fontSize: '16px', fontWeight: 'bold', color: 'var(--neutral-700)', marginBottom: '16px', display: 'flex', alignItems: 'center', backgroundColor: 'var(--neutral-100)', padding: '12px 16px', borderRadius: '8px', borderLeft: '4px solid var(--neutral-500)'}} className="shadow-sm">
+            <span style={{marginRight: '8px'}}>🎓</span>Wybór szkolenia
+          </h4>
+          <div className="mb-4" style={{marginLeft: '16px', marginRight: '16px'}}>
+            <FormField label={<><i className="fas fa-graduation-cap" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Wybrane szkolenie</>} required error={errors.selected_training}>
+              <div className={`custom-dropdown ${openDropdown === 'selected_training' ? 'open' : ''}`} ref={el => { if (el) dropdownRefs.current['selected_training'] = el; }}>
+                <div className="custom-dropdown-input" onClick={() => setOpenDropdown(openDropdown === 'selected_training' ? null : 'selected_training')}>
+                  <Input
+                    value={data.selected_training}
+                    onChange={handleChange('selected_training')}
+                    placeholder="Wybierz szkolenie"
+                    onFocus={() => setOpenDropdown('selected_training')}
+                    error={!!errors.selected_training}
+                  />
+                  <span className="dropdown-arrow">▼</span>
+                </div>
+                {openDropdown === 'selected_training' && (
+                  <div className="custom-dropdown-options">
+                    {TRAINING_OPTIONS.map(option => (
+                      <div
+                        key={option}
+                        className={`dropdown-option ${data.selected_training === option ? 'selected' : ''}`}
+                        onClick={() => handleDropdownSelect('selected_training', option)}
+                      >
+                        <span className="option-checkmark"></span>
+                        <span className="option-label">{option}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </FormField>
+          </div>
+        </div>
+
         {/* Sekcja podstawowych danych firmy */}
         <div className="mb-6">
           <h4 style={{fontSize: '16px', fontWeight: 'bold', color: 'var(--neutral-700)', marginBottom: '16px', display: 'flex', alignItems: 'center', backgroundColor: 'var(--neutral-100)', padding: '12px 16px', borderRadius: '8px', borderLeft: '4px solid var(--neutral-500)'}} className="shadow-sm">
@@ -300,6 +351,17 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                 />
               </FormField>
             </div>
+          </div>
+
+          <div className="mb-4" style={{marginLeft: '16px', marginRight: '16px'}}>
+            <FormField label={<><i className="fas fa-briefcase" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Stanowisko osoby uprawnionej</>} required error={errors.representative_position}>
+              <Input
+                value={data.representative_position}
+                onChange={handleChange('representative_position')}
+                placeholder="np. Dyrektor, Prezes, Właściciel"
+                error={!!errors.representative_position}
+              />
+            </FormField>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{marginLeft: '16px', marginRight: '16px'}}>
@@ -433,6 +495,17 @@ const CompanyDataStep: React.FC<CompanyDataStepProps> = ({ data, onChange, onVal
                 value={data.contact_person_name}
                 onChange={handleChange('contact_person_name')}
                 error={!!errors.contact_person_name}
+              />
+            </FormField>
+          </div>
+
+          <div className="mb-4" style={{marginLeft: '16px', marginRight: '16px'}}>
+            <FormField label={<><i className="fas fa-briefcase" style={{marginRight: '8px', color: 'var(--neutral-500)'}}></i>Stanowisko osoby kontaktowej</>} required error={errors.contact_person_position}>
+              <Input
+                value={data.contact_person_position}
+                onChange={handleChange('contact_person_position')}
+                placeholder="np. Dyrektor, Prezes, Właściciel"
+                error={!!errors.contact_person_position}
               />
             </FormField>
           </div>

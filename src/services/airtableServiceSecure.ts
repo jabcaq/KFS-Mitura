@@ -56,13 +56,16 @@ const COMPANY_FIELD_IDS = {
 
     // Osoby
     representative_person: 'fldJBWA0L39GHhbzN',      // 'Osoba uprawniona'
+    representative_position: 'fldKXfo4GbwefafSe',  // 'Stanowisko osoby uprawnionej'
     representative_phone: 'fldfOB2CjNM49XXrG',       // 'Telefon przedstawiciela'
     representative_email: 'fldQ4DHHTBAcgfpSX',       // 'Email osoby uprawnionej'
     contact_person_name: 'fld3Bh5roCuUOA4Bf',        // 'Imię i nazwisko osoby kontaktowej'
+    contact_person_position: 'fldKvAL2sltLc3qTO',  // 'Stanowisko osoby kontaktowej'
     contact_person_phone: 'fldxplyEUdpO6ruC4',       // 'Telefon osoby kontaktowej'
     contact_person_email: 'fldtwLBYR0UfcWTEy',       // 'Email osoby kontaktowej'
     responsible_person: 'fldWyVXSr2YYp3ceu',         // 'Osoba odpowiedzialna'
     responsible_person_phone: 'fldpSrs1mbCg4PqIA',   // 'Telefon osoby uprawnionej'
+    selected_training: 'fld0UNbRnw26LRJxm',          // 'Jakie szkolenie'
 
     // Adresy
     company_address: 'fldKmJwLQIsrhacL8',             // 'Adres firmy'
@@ -192,12 +195,15 @@ export const submitToAirtable = async (
                     [COMPANY_FIELD_IDS.company_nip]: formData.company_nip || '',
                     [COMPANY_FIELD_IDS.company_pkd]: formData.company_pkd || '',
                     [COMPANY_FIELD_IDS.representative_person]: formData.representative_person || '',
+                    [COMPANY_FIELD_IDS.representative_position]: formData.representative_position || '',
                     [COMPANY_FIELD_IDS.representative_phone]: formData.representative_phone || '',
                     [COMPANY_FIELD_IDS.representative_email]: formData.representative_email || '',
                     [COMPANY_FIELD_IDS.contact_person_name]: formData.contact_person_name || '',
+                    [COMPANY_FIELD_IDS.contact_person_position]: formData.contact_person_position || '',
                     [COMPANY_FIELD_IDS.contact_person_phone]: formData.contact_person_phone || '',
                     [COMPANY_FIELD_IDS.contact_person_email]: formData.contact_person_email || '',
                     [COMPANY_FIELD_IDS.responsible_person_phone]: formData.responsible_person_phone || '',
+                    [COMPANY_FIELD_IDS.selected_training]: formData.selected_training || '',
                     [COMPANY_FIELD_IDS.company_address]: formData.company_address || '',
                     [COMPANY_FIELD_IDS.activity_place]: formData.activity_place || '',
                     [COMPANY_FIELD_IDS.correspondence_address]: formData.correspondence_address || '',
@@ -313,12 +319,15 @@ export const getApplicationById = async (recordId: string): Promise<ApplicationD
             company_nip: fields[COMPANY_FIELD_IDS.company_nip] || '',
             company_pkd: fields[COMPANY_FIELD_IDS.company_pkd] || '',
             representative_person: fields[COMPANY_FIELD_IDS.representative_person] || '',
+            representative_position: fields[COMPANY_FIELD_IDS.representative_position] || '',
             representative_phone: fields[COMPANY_FIELD_IDS.representative_phone] || '',
             representative_email: fields[COMPANY_FIELD_IDS.representative_email] || '',
             contact_person_name: fields[COMPANY_FIELD_IDS.contact_person_name] || '',
+            contact_person_position: fields[COMPANY_FIELD_IDS.contact_person_position] || '',
             contact_person_phone: fields[COMPANY_FIELD_IDS.contact_person_phone] || '',
             contact_person_email: fields[COMPANY_FIELD_IDS.contact_person_email] || '',
             responsible_person_phone: fields[COMPANY_FIELD_IDS.responsible_person_phone] || '',
+            selected_training: fields[COMPANY_FIELD_IDS.selected_training] || '',
             company_address: fields[COMPANY_FIELD_IDS.company_address] || '',
             activity_place: fields[COMPANY_FIELD_IDS.activity_place] || '',
             correspondence_address: fields[COMPANY_FIELD_IDS.correspondence_address] || '',
@@ -415,6 +424,15 @@ export const updateApplication = async (recordId: string, data: Partial<CompanyD
         if (data.company_name !== undefined) updateFields[COMPANY_FIELD_IDS.company_name] = data.company_name;
         if (data.company_nip !== undefined) updateFields[COMPANY_FIELD_IDS.company_nip] = data.company_nip;
         if (data.company_pkd !== undefined) updateFields[COMPANY_FIELD_IDS.company_pkd] = data.company_pkd;
+        if (data.representative_person !== undefined) updateFields[COMPANY_FIELD_IDS.representative_person] = data.representative_person;
+        if (data.representative_position !== undefined) updateFields[COMPANY_FIELD_IDS.representative_position] = data.representative_position;
+        if (data.representative_phone !== undefined) updateFields[COMPANY_FIELD_IDS.representative_phone] = data.representative_phone;
+        if (data.representative_email !== undefined) updateFields[COMPANY_FIELD_IDS.representative_email] = data.representative_email;
+        if (data.contact_person_name !== undefined) updateFields[COMPANY_FIELD_IDS.contact_person_name] = data.contact_person_name;
+        if (data.contact_person_position !== undefined) updateFields[COMPANY_FIELD_IDS.contact_person_position] = data.contact_person_position;
+        if (data.contact_person_phone !== undefined) updateFields[COMPANY_FIELD_IDS.contact_person_phone] = data.contact_person_phone;
+        if (data.contact_person_email !== undefined) updateFields[COMPANY_FIELD_IDS.contact_person_email] = data.contact_person_email;
+        if (data.selected_training !== undefined) updateFields[COMPANY_FIELD_IDS.selected_training] = data.selected_training;
         // Add more field mappings as needed
 
         const requestBody = {

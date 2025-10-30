@@ -50,8 +50,18 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ companyData, employees }) => {
                         </div>
 
                         <div style={{display: 'flex', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid var(--neutral-200)', gap: '8px'}}>
+                            <label className="text-sm font-medium text-neutral-500">Wybrane szkolenie:</label>
+                            <p className="text-neutral-900 font-medium">{companyData.selected_training || 'Brak wyboru'}</p>
+                        </div>
+
+                        <div style={{display: 'flex', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid var(--neutral-200)', gap: '8px'}}>
                             <label className="text-sm font-medium text-neutral-500">Reprezentant:</label>
                             <p className="text-neutral-900 font-medium">{companyData.representative_person}</p>
+                        </div>
+
+                        <div style={{display: 'flex', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid var(--neutral-200)', gap: '8px'}}>
+                            <label className="text-sm font-medium text-neutral-500">Stanowisko reprezentanta:</label>
+                            <p className="text-neutral-900 font-medium">{companyData.representative_position || 'Brak'}</p>
                         </div>
 
                         <div style={{display: 'flex', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid var(--neutral-200)', gap: '8px'}}>
@@ -62,6 +72,11 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ companyData, employees }) => {
                         <div style={{display: 'flex', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid var(--neutral-200)', gap: '8px'}}>
                             <label className="text-sm font-medium text-neutral-500">Osoba kontaktowa:</label>
                             <p className="text-neutral-900 font-medium">{companyData.contact_person_name}</p>
+                        </div>
+
+                        <div style={{display: 'flex', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid var(--neutral-200)', gap: '8px'}}>
+                            <label className="text-sm font-medium text-neutral-500">Stanowisko osoby kontaktowej:</label>
+                            <p className="text-neutral-900 font-medium">{companyData.contact_person_position || 'Brak'}</p>
                         </div>
 
                         <div style={{display: 'flex', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid var(--neutral-200)', gap: '8px'}}>
